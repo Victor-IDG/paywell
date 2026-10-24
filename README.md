@@ -1,8 +1,8 @@
-# Misan Pharmacy: Payment Reliability Prototype
+# Dishan Pharmacy: Payment Reliability Prototype
 
 A portfolio-ready, **interactive product prototype** of a payment-timeout recovery feature for pharmacy checkout. A timeout is treated as an **unknown outcome**, not proof of failure. The system checks the original transaction attempt before ever offering a new chargeable attempt, and never marks an order paid without authoritative confirmation.
 
-> **Independent portfolio concept.** Not an official Misan product. No live payment provider, bank, wallet, or payment rail is connected. All transactions, names, IDs, timings, and provider events are synthetic and deterministic.
+> **Independent portfolio concept.** Not an official Dishan product. No live payment provider, bank, wallet, or payment rail is connected. All transactions, names, IDs, timings, and provider events are synthetic and deterministic.
 
 ## What this demonstrates
 
@@ -94,4 +94,4 @@ TEST_REPORT.md    # verification results and run log
 
 ## Credits & disclaimer
 
-Built as an independent product-management portfolio artifact from the supplied Project 1 brief and build-and-test guide. Synthetic data only. No affiliation with Misan, Bamboo, or any payment provider.
+Built as an independent product-management portfolio artifact from the supplied Project 1 brief and build-and-test guide. Synthetic data only. No affiliation with Dishan, Bamboo, or any payment provider.
