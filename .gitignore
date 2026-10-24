@@ -2,3 +2,5 @@ node_modules/
 qa/node_modules/
 .vercel/
 nohup.out
+.vercel
+.env*

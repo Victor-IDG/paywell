@@ -1,0 +1,871 @@
+{
+  "runId": "run-2026-10-24T13-39-44-173Z",
+  "status": "completed",
+  "startedAt": "2026-10-24T13:39:44.173Z",
+  "finishedAt": "2026-10-24T13:40:06.210Z",
+  "seed": 20261024,
+  "baseUrl": "http://127.0.0.1:8920",
+  "config": {
+    "executions": 18,
+    "mode": "all",
+    "scenarioIds": "all (17 definitions)",
+    "preset": "full-suite",
+    "concurrency": 1,
+    "visibleWorker": "single visible Chrome window, one execution at a time"
+  },
+  "productVersion": {
+    "file": "index.html",
+    "sha256": "33cd4f933a39",
+    "testedOn": "2026-10-24"
+  },
+  "environment": {
+    "engine": "Google Chrome (system, headed)",
+    "browserVersion": "151.0.7922.137",
+    "node": "v24.19.0",
+    "os": "linux"
+  },
+  "plan": [
+    {
+      "idx": 0,
+      "scenarioId": "H01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 1,
+      "scenarioId": "H02",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 2,
+      "scenarioId": "H03",
+      "mode": "before",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 3,
+      "scenarioId": "R01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 4,
+      "scenarioId": "R02",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 5,
+      "scenarioId": "R03",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 6,
+      "scenarioId": "V01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 7,
+      "scenarioId": "V02",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 8,
+      "scenarioId": "N01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 9,
+      "scenarioId": "N02",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 10,
+      "scenarioId": "N02",
+      "mode": "before",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 11,
+      "scenarioId": "N03",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 12,
+      "scenarioId": "K01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 13,
+      "scenarioId": "K02",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 14,
+      "scenarioId": "T01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 15,
+      "scenarioId": "T02",
+      "mode": "before",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 16,
+      "scenarioId": "U01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 17,
+      "scenarioId": "M01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    }
+  ],
+  "execSeq": 18,
+  "executions": [
+    {
+      "execId": 0,
+      "idx": 0,
+      "round": 0,
+      "scenarioId": "H01",
+      "title": "Improved flow: timeout then confirmed paid via original reference",
+      "category": "happy-path",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "task_completion",
+      "intentional": false,
+      "expected": "Timeout shows \"Still confirming\" (never Failed); two status checks on the SAME attempt end paid; order becomes paid with only 1 chargeable attempt; settlement exception opens.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:39:45.122Z",
+      "durationMs": 4201,
+      "assertions": [
+        {
+          "name": "UI: timeout screen is \"Still confirming this payment\"",
+          "ok": true
+        },
+        {
+          "name": "State A (rule A): attempt unknown, order payment_pending after timeout",
+          "ok": true
+        },
+        {
+          "name": "Rule C: pending result creates no new chargeable attempt",
+          "ok": true
+        },
+        {
+          "name": "Rule B: same attempt ID used for both checks (PAY-1042-01)",
+          "ok": true
+        },
+        {
+          "name": "Rule D: paid with exactly 1 chargeable attempt",
+          "ok": true
+        },
+        {
+          "name": "Rule 5: settlement exception opened, not silently resolved",
+          "ok": true
+        },
+        {
+          "name": "UI: paid result offers Next customer",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": null,
+        "taskCompleted": true,
+        "recoverySuccess": null,
+        "terminalCorrect": true
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 1,
+      "idx": 1,
+      "round": 0,
+      "scenarioId": "H02",
+      "title": "Improved flow: confirmed failure unlocks exactly one safe retry",
+      "category": "happy-path",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "recovery_success",
+      "intentional": false,
+      "expected": "Customer 2 (reached from a fresh page via the customer-1 paid setup): pending → confirmed failed on the original attempt → exactly one new chargeable attempt allowed → paid on attempt 2 (PAY-1043-02); status checks never change the chargeable count.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:39:49.385Z",
+      "durationMs": 6630,
+      "assertions": [
+        {
+          "name": "timeout screen keeps attempt unknown",
+          "ok": true
+        },
+        {
+          "name": "Queue advanced to customer 2 of 3",
+          "ok": true
+        },
+        {
+          "name": "Attempt 1 on customer 2 creates exactly one chargeable attempt (PAY-1043-01)",
+          "ok": true
+        },
+        {
+          "name": "Rule A/E: failure shown only after confirmation; retry offered; checks added no chargeable attempt",
+          "ok": true
+        },
+        {
+          "name": "Rule 4: exactly one new chargeable attempt after confirmed failure; new attempt ID (PAY-1043-02)",
+          "ok": true
+        },
+        {
+          "name": "Recovery completes paid on attempt 2 with no further chargeable attempts",
+          "ok": true
+        }
+      ],
+      "observations": [
+        "chargeable is a session-wide counter: the customer-1 paid setup contributes 1 before customer 2 begins."
+      ],
+      "measurements": {
+        "dupAttemptPrevented": null,
+        "taskCompleted": true,
+        "recoverySuccess": true,
+        "terminalCorrect": true
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 2,
+      "idx": 2,
+      "round": 0,
+      "scenarioId": "H03",
+      "title": "Baseline flow: timeout pushed as failure, blind retry creates 2nd charge",
+      "category": "baseline",
+      "severity": "major",
+      "mode": "before",
+      "persona": "ben",
+      "personaName": "Ben",
+      "metric": "dup_prevention",
+      "intentional": false,
+      "expected": "Documented baseline defect: timeout UI says \"Payment didn’t go through\" and offers retry without checking the original attempt; confirming creates a second chargeable attempt (PAY-1042-02). PASS means the baseline behaved as documented; the duplicate-prevention metric counts this as NOT prevented.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:39:56.053Z",
+      "durationMs": 1569,
+      "assertions": [
+        {
+          "name": "UI: baseline timeout copy \"Payment didn’t go through\"",
+          "ok": true
+        },
+        {
+          "name": "Observation-backed: model attempt is still unknown while UI pushes retry",
+          "ok": true
+        },
+        {
+          "name": "Baseline defect reproduced: second chargeable attempt created",
+          "ok": true
+        }
+      ],
+      "observations": [
+        "Baseline treats an unknown outcome as failure in copy while state stays unknown; the retry path creates a second chargeable attempt with no status check."
+      ],
+      "measurements": {
+        "dupAttemptPrevented": false,
+        "taskCompleted": true,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 3,
+      "idx": 3,
+      "round": 0,
+      "scenarioId": "R01",
+      "title": "Adversarial: retry attempt while original is pending is blocked",
+      "category": "rule-safety",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "dez",
+      "personaName": "Dez",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "Tapping \"Take payment\" while an attempt is unresolved shows the blocked screen; no second chargeable attempt is created; attempt ID unchanged.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:39:57.654Z",
+      "durationMs": 1736,
+      "assertions": [
+        {
+          "name": "Checkout shows pending notice, not a fresh start",
+          "ok": true
+        },
+        {
+          "name": "Rule D/4: blocked screen shown, dupBlocks incremented",
+          "ok": true
+        },
+        {
+          "name": "No second chargeable attempt; original ID PAY-1042-01 preserved",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": true,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 4,
+      "idx": 4,
+      "round": 0,
+      "scenarioId": "R02",
+      "title": "Adversarial: start a charge on an already-paid order (UI + direct call)",
+      "category": "adversarial",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "dez",
+      "personaName": "Dez",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "Paid checkout exposes no start-payment control; a direct startPayment() call is refused by the model guard; chargeable stays 1.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:39:59.437Z",
+      "durationMs": 3649,
+      "assertions": [
+        {
+          "name": "Paid checkout shows \"Order paid\" and exposes no start control",
+          "ok": true
+        },
+        {
+          "name": "Direct model call startPayment() is refused (guard)",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": true,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 5,
+      "idx": 5,
+      "round": 0,
+      "scenarioId": "R03",
+      "title": "Repeated status checks on an unresolved outcome stay pending and stable",
+      "category": "repeat",
+      "severity": "major",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "Customer 3 (reached from a fresh page via paid customer 1 + confirmed-failed customer 2): two checks stay pending and open exactly one unresolved exception; a third check changes nothing (same ID, no new chargeable attempt, no duplicate exception).",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:40:03.128Z",
+      "durationMs": 2765,
+      "assertions": [
+        {
+          "name": "timeout screen keeps attempt unknown",
+          "ok": true
+        },
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "locator.waitFor: Target page, context or browser has been closed"
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "locator.waitFor: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for locator('#screen h2').filter({ hasText: 'Payment completed' }).first() to be visible\u001b[22m\n",
+      "artifacts": {
+        "screenshot": "results/runs/run-2026-10-24T13-39-44-173Z/exec-005-R03-after.png",
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 6,
+      "idx": 6,
+      "round": 0,
+      "scenarioId": "V01",
+      "title": "Reconciliation: silent resolution (whitespace reason) is refused",
+      "category": "validation",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "cleo",
+      "personaName": "Cleo",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "Resolving a settlement exception with only whitespace is refused with a toast; exception stays Open in UI and state.",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:40:06.189Z",
+      "durationMs": 1,
+      "assertions": [
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "browser.newContext: Target page, context or browser has been closed"
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "browser.newContext: Target page, context or browser has been closed",
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 7,
+      "idx": 7,
+      "round": 0,
+      "scenarioId": "V02",
+      "title": "Reconciliation: review then resolve with a documented reason",
+      "category": "validation",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "cleo",
+      "personaName": "Cleo",
+      "metric": "task_completion",
+      "intentional": false,
+      "expected": "Exception moves open → in_review → resolved only with a written reason; reason is persisted and displayed.",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:40:06.191Z",
+      "durationMs": 1,
+      "assertions": [
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "browser.newContext: Target page, context or browser has been closed"
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "browser.newContext: Target page, context or browser has been closed",
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 8,
+      "idx": 8,
+      "round": 0,
+      "scenarioId": "N01",
+      "title": "Mode switch preserves each flow’s own state",
+      "category": "navigation",
+      "severity": "major",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "regression",
+      "intentional": false,
+      "expected": "After blocked state (dupBlocks=1) survives a round-trip through the Before tab and back.",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:40:06.192Z",
+      "durationMs": 1,
+      "assertions": [
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "browser.newContext: Target page, context or browser has been closed"
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "browser.newContext: Target page, context or browser has been closed",
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 9,
+      "idx": 9,
+      "round": 0,
+      "scenarioId": "N02",
+      "title": "Reset restores the documented initial state",
+      "category": "regression",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "After starting a payment, \"Start over\" returns checkout, order 1 of 3, no attempt, chargeable 0, state awaiting_payment.",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:40:06.193Z",
+      "durationMs": 1,
+      "assertions": [
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "browser.newContext: Target page, context or browser has been closed"
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "browser.newContext: Target page, context or browser has been closed",
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 10,
+      "idx": 10,
+      "round": 0,
+      "scenarioId": "N02",
+      "title": "Reset restores the documented initial state",
+      "category": "regression",
+      "severity": "critical",
+      "mode": "before",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "After starting a payment, \"Start over\" returns checkout, order 1 of 3, no attempt, chargeable 0, state awaiting_payment.",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:40:06.195Z",
+      "durationMs": 1,
+      "assertions": [
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "browser.newContext: Target page, context or browser has been closed"
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "browser.newContext: Target page, context or browser has been closed",
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 11,
+      "idx": 11,
+      "round": 0,
+      "scenarioId": "N03",
+      "title": "Adversarial: navigate back while a status check is in flight",
+      "category": "adversarial",
+      "severity": "minor",
+      "mode": "after",
+      "persona": "dez",
+      "personaName": "Dez",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "Safety: whatever the user does mid-check, no charge is created and the attempt is never pushed to a terminal state by navigation. (Screen-level behaviour is recorded as an observation, not asserted: the guide defines no rule for mid-check navigation.)",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:40:06.197Z",
+      "durationMs": 0,
+      "assertions": [
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "browser.newContext: Target page, context or browser has been closed"
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "browser.newContext: Target page, context or browser has been closed",
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 12,
+      "idx": 12,
+      "round": 0,
+      "scenarioId": "K01",
+      "title": "Keyboard-only: reach and activate the primary action with visible focus",
+      "category": "accessibility",
+      "severity": "major",
+      "mode": "after",
+      "persona": "eve",
+      "personaName": "Eve",
+      "metric": "accessibility",
+      "intentional": false,
+      "expected": "Tab reaches \"Start digital payment\"; focus outline is visible; Enter starts the payment (timeout screen).",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:40:06.198Z",
+      "durationMs": 1,
+      "assertions": [
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "browser.newContext: Target page, context or browser has been closed"
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "browser.newContext: Target page, context or browser has been closed",
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 13,
+      "idx": 13,
+      "round": 0,
+      "scenarioId": "K02",
+      "title": "Keyboard: Escape closes the reconciliation dialog and returns focus",
+      "category": "accessibility",
+      "severity": "major",
+      "mode": "after",
+      "persona": "eve",
+      "personaName": "Eve",
+      "metric": "accessibility",
+      "intentional": false,
+      "expected": "Sheet opens as a modal dialog with focus inside; Escape closes it and focus returns to the Reconciliation button.",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:40:06.200Z",
+      "durationMs": 0,
+      "assertions": [
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "browser.newContext: Target page, context or browser has been closed"
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "browser.newContext: Target page, context or browser has been closed",
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 14,
+      "idx": 14,
+      "round": 0,
+      "scenarioId": "T01",
+      "title": "Rule A: timeout never renders or records a failed outcome",
+      "category": "timeout",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "terminal_state",
+      "intentional": false,
+      "expected": "After a timeout the heading is uncertainty copy (not \"Payment failed\" / \"didn’t go through\"), attempt stays unknown, order stays payment_pending, and no retry/duplicate control is offered.",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:40:06.201Z",
+      "durationMs": 1,
+      "assertions": [
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "browser.newContext: Target page, context or browser has been closed"
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "browser.newContext: Target page, context or browser has been closed",
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 15,
+      "idx": 15,
+      "round": 0,
+      "scenarioId": "T02",
+      "title": "Baseline: timeout presented as failure while state remains unknown",
+      "category": "baseline",
+      "severity": "major",
+      "mode": "before",
+      "persona": "ben",
+      "personaName": "Ben",
+      "metric": "terminal_state",
+      "intentional": false,
+      "expected": "Documented baseline defect: UI copy says the payment \"didn’t go through\" and offers retry, while the model still holds attempt=unknown. PASS means the defect is reproduced as documented; counted as an incorrect-terminal-presentation observation in the comparison.",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:40:06.203Z",
+      "durationMs": 1,
+      "assertions": [
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "browser.newContext: Target page, context or browser has been closed"
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "browser.newContext: Target page, context or browser has been closed",
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 16,
+      "idx": 16,
+      "round": 0,
+      "scenarioId": "U01",
+      "title": "Unresolved outcome: support handoff exposes the original reference",
+      "category": "failure-recovery",
+      "severity": "major",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "recovery_success",
+      "intentional": false,
+      "expected": "After two pending checks: one unresolved exception exists; \"Get help\" shows a support screen carrying the original attempt reference and no new attempt is created.",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:40:06.205Z",
+      "durationMs": 2,
+      "assertions": [
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "browser.newContext: Target page, context or browser has been closed"
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "browser.newContext: Target page, context or browser has been closed",
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 17,
+      "idx": 17,
+      "round": 0,
+      "scenarioId": "M01",
+      "title": "Acceptance probe: intentionally false assertion (must report FAIL)",
+      "category": "meta",
+      "severity": "info",
+      "mode": "after",
+      "persona": "probe",
+      "personaName": "QA probe",
+      "metric": "meta",
+      "intentional": true,
+      "expected": "Known-false assertion: expects the timeout heading to be \"Payment failed\". The product is CORRECT to disagree; this probe proves failures are reported honestly. Excluded from all product metrics.",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:40:06.208Z",
+      "durationMs": 1,
+      "assertions": [
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "browser.newContext: Target page, context or browser has been closed"
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "browser.newContext: Target page, context or browser has been closed",
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    }
+  ],
+  "error": null,
+  "counts": {
+    "PASS": 5,
+    "FAIL": 13,
+    "BLOCKED": 0,
+    "INCONCLUSIVE": 0,
+    "SKIPPED": 0,
+    "pending": 0
+  }
+}

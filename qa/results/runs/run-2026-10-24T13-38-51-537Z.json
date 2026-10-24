@@ -1,8 +1,8 @@
 {
   "runId": "run-2026-10-24T13-38-51-537Z",
-  "status": "running",
+  "status": "completed",
   "startedAt": "2026-10-24T13:38:51.537Z",
-  "finishedAt": null,
+  "finishedAt": "2026-10-24T13:39:16.158Z",
   "seed": 20261024,
   "baseUrl": "http://127.0.0.1:8920",
   "config": {
@@ -47,10 +47,11 @@
       "idx": 2,
       "scenarioId": "U01",
       "mode": "after",
-      "round": 0
+      "round": 0,
+      "status": "done"
     }
   ],
-  "execSeq": 2,
+  "execSeq": 3,
   "executions": [
     {
       "execId": 0,
@@ -163,15 +164,61 @@
         "trace": null
       },
       "rerunOf": null
+    },
+    {
+      "execId": 2,
+      "idx": 2,
+      "round": 0,
+      "scenarioId": "U01",
+      "title": "Unresolved outcome: support handoff exposes the original reference",
+      "category": "failure-recovery",
+      "severity": "major",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "recovery_success",
+      "intentional": false,
+      "expected": "After two pending checks: one unresolved exception exists; \"Get help\" shows a support screen carrying the original attempt reference and no new attempt is created.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:39:07.997Z",
+      "durationMs": 8139,
+      "assertions": [
+        {
+          "name": "timeout screen keeps attempt unknown",
+          "ok": true
+        },
+        {
+          "name": "Unresolved exception opened (rule 6); checks created no chargeable attempt",
+          "ok": true
+        },
+        {
+          "name": "Support screen shows the original reference PAY-1044-01",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": true,
+        "taskCompleted": true,
+        "recoverySuccess": true,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
     }
   ],
   "error": null,
   "counts": {
-    "PASS": 2,
+    "PASS": 3,
     "FAIL": 0,
     "BLOCKED": 0,
     "INCONCLUSIVE": 0,
     "SKIPPED": 0,
-    "pending": 1
+    "pending": 0
   }
 }
