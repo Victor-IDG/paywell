@@ -1,0 +1,972 @@
+{
+  "runId": "run-2026-10-24T13-19-57-948Z",
+  "status": "completed",
+  "startedAt": "2026-10-24T13:19:57.949Z",
+  "finishedAt": "2026-10-24T13:20:52.334Z",
+  "seed": 20261024,
+  "baseUrl": "http://127.0.0.1:8920",
+  "config": {
+    "executions": 18,
+    "mode": "all",
+    "scenarioIds": "all (17 definitions)",
+    "preset": "full-suite",
+    "concurrency": 1,
+    "visibleWorker": "single visible Chrome window, one execution at a time"
+  },
+  "productVersion": {
+    "file": "index.html",
+    "sha256": "33cd4f933a39",
+    "testedOn": "2026-10-24"
+  },
+  "environment": {
+    "engine": "Google Chrome (system, headed)",
+    "browserVersion": "151.0.7922.137",
+    "node": "v24.19.0",
+    "os": "linux"
+  },
+  "plan": [
+    {
+      "idx": 0,
+      "scenarioId": "H01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 1,
+      "scenarioId": "H02",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 2,
+      "scenarioId": "H03",
+      "mode": "before",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 3,
+      "scenarioId": "R01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 4,
+      "scenarioId": "R02",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 5,
+      "scenarioId": "R03",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 6,
+      "scenarioId": "V01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 7,
+      "scenarioId": "V02",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 8,
+      "scenarioId": "N01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 9,
+      "scenarioId": "N02",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 10,
+      "scenarioId": "N02",
+      "mode": "before",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 11,
+      "scenarioId": "N03",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 12,
+      "scenarioId": "K01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 13,
+      "scenarioId": "K02",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 14,
+      "scenarioId": "T01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 15,
+      "scenarioId": "T02",
+      "mode": "before",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 16,
+      "scenarioId": "U01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 17,
+      "scenarioId": "M01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    }
+  ],
+  "execSeq": 18,
+  "executions": [
+    {
+      "execId": 0,
+      "idx": 0,
+      "round": 0,
+      "scenarioId": "H01",
+      "title": "Improved flow: timeout then confirmed paid via original reference",
+      "category": "happy-path",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "task_completion",
+      "intentional": false,
+      "expected": "Timeout shows \"Still confirming\" (never Failed); two status checks on the SAME attempt end paid; order becomes paid with only 1 chargeable attempt; settlement exception opens.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:19:59.074Z",
+      "durationMs": 3988,
+      "assertions": [
+        {
+          "name": "UI: timeout screen is \"Still confirming this payment\"",
+          "ok": true
+        },
+        {
+          "name": "State A (rule A): attempt unknown, order payment_pending after timeout",
+          "ok": true
+        },
+        {
+          "name": "Rule C: pending result creates no new chargeable attempt",
+          "ok": true
+        },
+        {
+          "name": "Rule B: same attempt ID used for both checks (PAY-1042-01)",
+          "ok": true
+        },
+        {
+          "name": "Rule D: paid with exactly 1 chargeable attempt",
+          "ok": true
+        },
+        {
+          "name": "Rule 5: settlement exception opened, not silently resolved",
+          "ok": true
+        },
+        {
+          "name": "UI: paid result offers Next customer",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": null,
+        "taskCompleted": true,
+        "recoverySuccess": null,
+        "terminalCorrect": true
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 1,
+      "idx": 1,
+      "round": 0,
+      "scenarioId": "H02",
+      "title": "Improved flow: confirmed failure unlocks exactly one safe retry",
+      "category": "happy-path",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "recovery_success",
+      "intentional": false,
+      "expected": "Customer 2: pending → confirmed failed → new attempt allowed → paid on attempt 2; chargeable total = 2, attempt IDs differ.",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:20:03.125Z",
+      "durationMs": 4899,
+      "assertions": [
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "locator.click: Timeout 4000ms exceeded."
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "locator.click: Timeout 4000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#screen button[data-action=\"next\"]').first()\u001b[22m\n",
+      "artifacts": {
+        "screenshot": "results/runs/run-2026-10-24T13-19-57-948Z/exec-001-H02-after.png",
+        "trace": "results/runs/run-2026-10-24T13-19-57-948Z/exec-001-H02-after.zip"
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 2,
+      "idx": 2,
+      "round": 0,
+      "scenarioId": "H03",
+      "title": "Baseline flow: timeout pushed as failure, blind retry creates 2nd charge",
+      "category": "baseline",
+      "severity": "major",
+      "mode": "before",
+      "persona": "ben",
+      "personaName": "Ben",
+      "metric": "dup_prevention",
+      "intentional": false,
+      "expected": "Documented baseline defect: timeout UI says \"Payment didn’t go through\" and offers retry without checking the original attempt; confirming creates a second chargeable attempt (PAY-1042-02). PASS means the baseline behaved as documented; the duplicate-prevention metric counts this as NOT prevented.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:20:08.360Z",
+      "durationMs": 1882,
+      "assertions": [
+        {
+          "name": "UI: baseline timeout copy \"Payment didn’t go through\"",
+          "ok": true
+        },
+        {
+          "name": "Observation-backed: model attempt is still unknown while UI pushes retry",
+          "ok": true
+        },
+        {
+          "name": "Baseline defect reproduced: second chargeable attempt created",
+          "ok": true
+        }
+      ],
+      "observations": [
+        "Baseline treats an unknown outcome as failure in copy while state stays unknown; the retry path creates a second chargeable attempt with no status check."
+      ],
+      "measurements": {
+        "dupAttemptPrevented": false,
+        "taskCompleted": true,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 3,
+      "idx": 3,
+      "round": 0,
+      "scenarioId": "R01",
+      "title": "Adversarial: retry attempt while original is pending is blocked",
+      "category": "rule-safety",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "dez",
+      "personaName": "Dez",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "Tapping \"Take payment\" while an attempt is unresolved shows the blocked screen; no second chargeable attempt is created; attempt ID unchanged.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:20:10.277Z",
+      "durationMs": 1480,
+      "assertions": [
+        {
+          "name": "Checkout shows pending notice, not a fresh start",
+          "ok": true
+        },
+        {
+          "name": "Rule D/4: blocked screen shown, dupBlocks incremented",
+          "ok": true
+        },
+        {
+          "name": "No second chargeable attempt; original ID PAY-1042-01 preserved",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": true,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 4,
+      "idx": 4,
+      "round": 0,
+      "scenarioId": "R02",
+      "title": "Adversarial: start a charge on an already-paid order (UI + direct call)",
+      "category": "adversarial",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "dez",
+      "personaName": "Dez",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "Paid checkout exposes no start-payment control; a direct startPayment() call is refused by the model guard; chargeable stays 1.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:20:11.776Z",
+      "durationMs": 3521,
+      "assertions": [
+        {
+          "name": "Paid checkout shows \"Order paid\" and exposes no start control",
+          "ok": true
+        },
+        {
+          "name": "Direct model call startPayment() is refused (guard)",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": true,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 5,
+      "idx": 5,
+      "round": 0,
+      "scenarioId": "R03",
+      "title": "Repeated status checks on an unresolved outcome stay pending and stable",
+      "category": "repeat",
+      "severity": "major",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "Customer 3: two checks stay pending and open exactly one unresolved exception; a third check changes nothing (same ID, no new attempt, no duplicate exception).",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:20:15.343Z",
+      "durationMs": 5099,
+      "assertions": [
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "locator.click: Timeout 4000ms exceeded."
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "locator.click: Timeout 4000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#screen button[data-action=\"next\"]').first()\u001b[22m\n",
+      "artifacts": {
+        "screenshot": "results/runs/run-2026-10-24T13-19-57-948Z/exec-005-R03-after.png",
+        "trace": "results/runs/run-2026-10-24T13-19-57-948Z/exec-005-R03-after.zip"
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 6,
+      "idx": 6,
+      "round": 0,
+      "scenarioId": "V01",
+      "title": "Reconciliation: silent resolution (whitespace reason) is refused",
+      "category": "validation",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "cleo",
+      "personaName": "Cleo",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "Resolving a settlement exception with only whitespace is refused with a toast; exception stays Open in UI and state.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:20:20.686Z",
+      "durationMs": 3885,
+      "assertions": [
+        {
+          "name": "timeout screen keeps attempt unknown",
+          "ok": true
+        },
+        {
+          "name": "Sheet opens with the settlement exception",
+          "ok": true
+        },
+        {
+          "name": "UI: refusal toast shown",
+          "ok": true
+        },
+        {
+          "name": "Rule G: exception remains open in state",
+          "ok": true
+        },
+        {
+          "name": "UI: status pill still \"Open\"",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": null,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 7,
+      "idx": 7,
+      "round": 0,
+      "scenarioId": "V02",
+      "title": "Reconciliation: review then resolve with a documented reason",
+      "category": "validation",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "cleo",
+      "personaName": "Cleo",
+      "metric": "task_completion",
+      "intentional": false,
+      "expected": "Exception moves open → in_review → resolved only with a written reason; reason is persisted and displayed.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:20:24.606Z",
+      "durationMs": 3599,
+      "assertions": [
+        {
+          "name": "timeout screen keeps attempt unknown",
+          "ok": true
+        },
+        {
+          "name": "Review transition recorded",
+          "ok": true
+        },
+        {
+          "name": "Resolved with reason persisted and shown",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": null,
+        "taskCompleted": true,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 8,
+      "idx": 8,
+      "round": 0,
+      "scenarioId": "N01",
+      "title": "Mode switch preserves each flow’s own state",
+      "category": "navigation",
+      "severity": "major",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "regression",
+      "intentional": false,
+      "expected": "After blocked state (dupBlocks=1) survives a round-trip through the Before tab and back.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:20:28.228Z",
+      "durationMs": 2415,
+      "assertions": [
+        {
+          "name": "Before tab active with its own fresh checkout state",
+          "ok": true
+        },
+        {
+          "name": "After state intact: blocked screen, dupBlocks=1, ops control visible",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": true,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 9,
+      "idx": 9,
+      "round": 0,
+      "scenarioId": "N02",
+      "title": "Reset restores the documented initial state",
+      "category": "regression",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "After starting a payment, \"Start over\" returns checkout, order 1 of 3, no attempt, chargeable 0, state awaiting_payment.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:20:30.674Z",
+      "durationMs": 1673,
+      "assertions": [
+        {
+          "name": "Screen back to checkout",
+          "ok": true
+        },
+        {
+          "name": "Counters/state restored",
+          "ok": true
+        },
+        {
+          "name": "Order meta shows customer 1 of 3",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": null,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 10,
+      "idx": 10,
+      "round": 0,
+      "scenarioId": "N02",
+      "title": "Reset restores the documented initial state",
+      "category": "regression",
+      "severity": "critical",
+      "mode": "before",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "After starting a payment, \"Start over\" returns checkout, order 1 of 3, no attempt, chargeable 0, state awaiting_payment.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:20:32.415Z",
+      "durationMs": 1324,
+      "assertions": [
+        {
+          "name": "Screen back to checkout",
+          "ok": true
+        },
+        {
+          "name": "Counters/state restored",
+          "ok": true
+        },
+        {
+          "name": "Order meta shows customer 1 of 3",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": null,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 11,
+      "idx": 11,
+      "round": 0,
+      "scenarioId": "N03",
+      "title": "Adversarial: navigate back while a status check is in flight",
+      "category": "adversarial",
+      "severity": "minor",
+      "mode": "after",
+      "persona": "dez",
+      "personaName": "Dez",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "Safety: whatever the user does mid-check, no charge is created and the attempt is never pushed to a terminal state by navigation. (Screen-level behaviour is recorded as an observation, not asserted: the guide defines no rule for mid-check navigation.)",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:20:33.767Z",
+      "durationMs": 2507,
+      "assertions": [
+        {
+          "name": "Checking screen visible with original reference",
+          "ok": true
+        },
+        {
+          "name": "Safety holds after mid-check navigation",
+          "ok": true
+        }
+      ],
+      "observations": [
+        "Observed: in-flight status check still applied after Back (screen ended at \"result\"). State stayed safe (1 charge, attempt unknown). Recommendation: cancel or disable Back while checking."
+      ],
+      "measurements": {
+        "dupAttemptPrevented": true,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 12,
+      "idx": 12,
+      "round": 0,
+      "scenarioId": "K01",
+      "title": "Keyboard-only: reach and activate the primary action with visible focus",
+      "category": "accessibility",
+      "severity": "major",
+      "mode": "after",
+      "persona": "eve",
+      "personaName": "Eve",
+      "metric": "accessibility",
+      "intentional": false,
+      "expected": "Tab reaches \"Start digital payment\"; focus outline is visible; Enter starts the payment (timeout screen).",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:20:36.319Z",
+      "durationMs": 1570,
+      "assertions": [
+        {
+          "name": "Tab reaches the start control (\"Start digital payment\")",
+          "ok": true
+        },
+        {
+          "name": "Focus outline visible on keyboard focus",
+          "ok": true
+        },
+        {
+          "name": "Enter activates: timeout screen appears",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": null,
+        "taskCompleted": true,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 13,
+      "idx": 13,
+      "round": 0,
+      "scenarioId": "K02",
+      "title": "Keyboard: Escape closes the reconciliation dialog and returns focus",
+      "category": "accessibility",
+      "severity": "major",
+      "mode": "after",
+      "persona": "eve",
+      "personaName": "Eve",
+      "metric": "accessibility",
+      "intentional": false,
+      "expected": "Sheet opens as a modal dialog with focus inside; Escape closes it and focus returns to the Reconciliation button.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:20:37.953Z",
+      "durationMs": 3730,
+      "assertions": [
+        {
+          "name": "timeout screen keeps attempt unknown",
+          "ok": true
+        },
+        {
+          "name": "Dialog open with focus moved into it",
+          "ok": true
+        },
+        {
+          "name": "Escape closes dialog and restores focus to trigger",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": null,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 14,
+      "idx": 14,
+      "round": 0,
+      "scenarioId": "T01",
+      "title": "Rule A: timeout never renders or records a failed outcome",
+      "category": "timeout",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "terminal_state",
+      "intentional": false,
+      "expected": "After a timeout the heading is uncertainty copy (not \"Payment failed\" / \"didn’t go through\"), attempt stays unknown, order stays payment_pending, and no retry/duplicate control is offered.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:20:41.725Z",
+      "durationMs": 1618,
+      "assertions": [
+        {
+          "name": "Heading is \"Still confirming this payment\"",
+          "ok": true
+        },
+        {
+          "name": "No failure copy and no retry/duplicate controls",
+          "ok": true
+        },
+        {
+          "name": "State: unknown outcome, not confirmed_failed",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": null,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": true
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 15,
+      "idx": 15,
+      "round": 0,
+      "scenarioId": "T02",
+      "title": "Baseline: timeout presented as failure while state remains unknown",
+      "category": "baseline",
+      "severity": "major",
+      "mode": "before",
+      "persona": "ben",
+      "personaName": "Ben",
+      "metric": "terminal_state",
+      "intentional": false,
+      "expected": "Documented baseline defect: UI copy says the payment \"didn’t go through\" and offers retry, while the model still holds attempt=unknown. PASS means the defect is reproduced as documented; counted as an incorrect-terminal-presentation observation in the comparison.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:20:43.411Z",
+      "durationMs": 1505,
+      "assertions": [
+        {
+          "name": "UI: failure-style heading shown",
+          "ok": true
+        },
+        {
+          "name": "State: attempt still unknown (model did not confirm failure)",
+          "ok": true
+        },
+        {
+          "name": "Retry offered without any status-check control",
+          "ok": true
+        }
+      ],
+      "observations": [
+        "Baseline presents an unknown outcome as a failure in copy; model state remains unknown. This is the divergence the improved flow removes."
+      ],
+      "measurements": {
+        "dupAttemptPrevented": null,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": false
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 16,
+      "idx": 16,
+      "round": 0,
+      "scenarioId": "U01",
+      "title": "Unresolved outcome: support handoff exposes the original reference",
+      "category": "failure-recovery",
+      "severity": "major",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "recovery_success",
+      "intentional": false,
+      "expected": "After two pending checks: one unresolved exception exists; \"Get help\" shows a support screen carrying the original attempt reference and no new attempt is created.",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:20:44.959Z",
+      "durationMs": 5168,
+      "assertions": [
+        {
+          "name": "Execution completed without error",
+          "ok": false,
+          "detail": "locator.click: Timeout 4000ms exceeded."
+        }
+      ],
+      "observations": [],
+      "measurements": {},
+      "error": "locator.click: Timeout 4000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#screen button[data-action=\"next\"]').first()\u001b[22m\n",
+      "artifacts": {
+        "screenshot": "results/runs/run-2026-10-24T13-19-57-948Z/exec-016-U01-after.png",
+        "trace": "results/runs/run-2026-10-24T13-19-57-948Z/exec-016-U01-after.zip"
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 17,
+      "idx": 17,
+      "round": 0,
+      "scenarioId": "M01",
+      "title": "Acceptance probe: intentionally false assertion (must report FAIL)",
+      "category": "meta",
+      "severity": "info",
+      "mode": "after",
+      "persona": "probe",
+      "personaName": "QA probe",
+      "metric": "meta",
+      "intentional": true,
+      "expected": "Known-false assertion: expects the timeout heading to be \"Payment failed\". The product is CORRECT to disagree; this probe proves failures are reported honestly. Excluded from all product metrics.",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:20:50.339Z",
+      "durationMs": 1512,
+      "assertions": [
+        {
+          "name": "Probe: timeout heading is exactly \"Payment failed\" (known false)",
+          "ok": false,
+          "detail": "expected \"Payment failed\", got \"Still confirming this payment\""
+        }
+      ],
+      "observations": [
+        "Intentional failure injected to verify the harness does not mask failing assertions."
+      ],
+      "measurements": {
+        "dupAttemptPrevented": null,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": "results/runs/run-2026-10-24T13-19-57-948Z/exec-017-M01-after.png",
+        "trace": "results/runs/run-2026-10-24T13-19-57-948Z/exec-017-M01-after.zip"
+      },
+      "rerunOf": null
+    }
+  ],
+  "error": null,
+  "counts": {
+    "PASS": 14,
+    "FAIL": 4,
+    "BLOCKED": 0,
+    "INCONCLUSIVE": 0,
+    "SKIPPED": 0,
+    "pending": 0
+  }
+}

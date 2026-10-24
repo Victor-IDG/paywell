@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Pharmacy checkout prototype: a payment timeout is an unknown outcome, not a failure. The original attempt is checked before any retry.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2310243a'/%3E%3Ctext x='16' y='22' font-size='18' font-family='sans-serif' font-weight='800' fill='white' text-anchor='middle'%3Em%3C/text%3E%3C/svg%3E">
+<title>Misan Pharmacy: Checkout</title>
+<style>
+:root{
+  --navy:#10243a;--navy2:#193650;--paper:#f5f6f2;--white:#fff;--ink:#172a3b;--muted:#687786;
+  --line:#dce3e7;--green:#167d63;--green-soft:#e7f5ef;--amber:#9b6415;--amber-soft:#fff3dc;
+  --red:#a63d42;--red-soft:#fff0ef;--blue-soft:#eaf1f7;--blue:#2c6e9e;
+  --radius:16px;--radius-sm:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}
+button,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid #3b9cdb;outline-offset:3px}
+button:disabled{opacity:.45;cursor:not-allowed}
+[hidden]{display:none!important}
+
+/* ── top bar ── */
+.topbar{position:sticky;top:0;z-index:20;background:rgba(245,246,242,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar-inner{max-width:460px;margin:0 auto;padding:12px 14px;display:flex;align-items:center;column-gap:14px;row-gap:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:9px;font-weight:850;letter-spacing:-.03em;font-size:16px;line-height:1.1}
+.brandmark{width:30px;height:30px;border-radius:9px;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}
+.brand .sub{color:var(--muted);font-weight:650;font-size:12.5px}
+.segmented{display:inline-flex;background:#e3e9e6;border-radius:99px;padding:4px;gap:3px;margin-left:auto}
+.segmented button{border:0;background:transparent;border-radius:99px;padding:9px 18px;font-size:13px;font-weight:750;color:var(--muted);min-height:40px}
+.segmented button[aria-selected="true"]{background:var(--white);color:var(--ink);box-shadow:0 1px 4px rgba(16,36,58,.14)}
+.head-actions{display:flex;gap:12px;width:100%;align-items:center}
+.head-actions #resetBtn{margin-left:auto}
+.icon-btn{border:1px solid var(--line);background:var(--white);border-radius:10px;padding:10px 16px;font-size:12.5px;font-weight:700;color:var(--ink);min-height:40px;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.icon-btn:hover{background:var(--paper)}
+.icon-btn .badge{background:var(--amber);color:#fff;border-radius:99px;font-size:10px;font-weight:850;padding:1px 6px;min-width:16px}
+.icon-btn .badge:empty{display:none}
+
+/* ── app shell ── */
+.app{max-width:460px;margin:0 auto;padding:14px 14px 28px}
+.app-card{background:var(--white);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 10px 34px rgba(16,36,58,.07)}
+.app-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--white)}
+.app-head .who{font-weight:850;letter-spacing:-.03em;font-size:14px}
+.app-head .who span{color:var(--green)}
+.app-head .meta{font-size:11px;color:var(--muted);font-weight:650}
+.screen{padding:16px 16px 20px;display:flex;flex-direction:column;gap:12px;min-height:480px}
+.screen h2{margin:0;font-size:20px;letter-spacing:-.035em;line-height:1.18}
+.screen .subcopy{margin:0;font-size:13px;color:var(--muted)}
+.back{border:0;background:none;color:var(--blue);font-size:12.5px;font-weight:700;padding:2px 0;text-align:left;min-height:32px}
+.step-label{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.step-num{width:20px;height:20px;border-radius:50%;background:var(--navy);color:#fff;display:inline-grid;place-items:center;font-size:10px;font-weight:800;letter-spacing:0;text-transform:none}
+
+/* ── pieces ── */
+.amount-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:13px 14px}
+.amount-card .label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:var(--muted)}
+.amount-card .amount{font-size:25px;font-weight:850;letter-spacing:-.04em;margin:3px 0}
+.amount-card .recipient{font-size:12.5px;color:var(--muted)}
+.detail-list{border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:12.5px}
+.detail-row{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--white)}
+.detail-row:last-child{border-bottom:0}
+.detail-row span{color:var(--muted)}
+.detail-row strong{text-align:right;font-weight:750}
+.status-pill{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:3px 9px;font-size:11px;font-weight:750}
+.status-pill .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.status-pill.pending{background:var(--amber-soft);color:var(--amber)}
+.status-pill.success{background:var(--green-soft);color:var(--green)}
+.status-pill.failed{background:var(--red-soft);color:var(--red)}
+.status-pill.neutral{background:var(--blue-soft);color:var(--blue)}
+.notice{border-radius:12px;padding:11px 13px;font-size:12.5px}
+.notice strong{display:block;font-size:12.5px;margin-bottom:3px}
+.notice p{margin:0;opacity:.88}
+.notice.warn{background:var(--amber-soft);border:1px solid #f0d9a8}
+.notice.bad{background:var(--red-soft);border:1px solid #f0c4c0}
+.notice.good{background:var(--green-soft);border:1px solid #bfe3d4}
+.notice.neutral{background:var(--blue-soft);border:1px solid #c9dcec}
+/* small contextual note about the improvement/baseline */
+.flow-note{border-radius:10px;padding:9px 12px;font-size:11.5px;line-height:1.4;border:1px dashed var(--line);color:var(--muted);background:#fafbf8}
+.flow-note strong{color:var(--ink);font-weight:800}
+.actions{display:flex;flex-direction:column;gap:8px;margin-top:auto}
+.btn{border:0;border-radius:12px;padding:13px 16px;font-size:14px;font-weight:750;text-align:center;min-height:46px}
+.btn.primary{background:var(--navy);color:#fff}
+.btn.primary:hover{background:var(--navy2)}
+.btn.secondary{background:var(--white);color:var(--ink);border:1px solid var(--line)}
+.btn.secondary:hover{background:var(--paper)}
+.btn.quiet{background:transparent;color:var(--muted);font-weight:650}
+.btn.danger{background:var(--red);color:#fff}
+.checking{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.spinner{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--navy);animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.footnote{max-width:460px;margin:10px auto 0;padding:0 14px;font-size:10.5px;color:var(--muted);text-align:center}
+
+/* ── ops sheet ── */
+.sheet-backdrop{position:fixed;inset:0;background:rgba(16,36,58,.4);z-index:40;display:none}
+.sheet-backdrop.open{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--white);border-radius:20px 20px 0 0;max-height:80vh;overflow:auto;display:none;box-shadow:0 -12px 40px rgba(16,36,58,.2)}
+.sheet.open{display:block}
+.sheet-inner{max-width:460px;margin:0 auto;padding:16px 16px 24px}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.sheet-head h2{margin:0;font-size:17px;letter-spacing:-.03em}
+.sheet-sub{margin:0 0 14px;font-size:12px;color:var(--muted)}
+.exc{border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+.exc-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.exc-type{font-weight:800;font-size:13px;letter-spacing:-.02em}
+.exc-detail{font-size:12px;color:var(--muted);margin:6px 0}
+.exc-reason{font-size:12px;background:var(--green-soft);border-radius:8px;padding:7px 9px;margin:6px 0 0;color:var(--ink)}
+.exc-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.exc-actions .btn{padding:9px 12px;font-size:12.5px;min-height:38px;border-radius:10px}
+.resolve-row{display:flex;gap:8px;margin-top:10px}
+.resolve-row input{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:13px;min-width:0}
+.resolve-row input:focus{border-color:var(--blue)}
+.sheet-empty{font-size:13px;color:var(--muted);text-align:center;padding:26px 0}
+
+/* ── toast ── */
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;font-size:12.5px;font-weight:650;border-radius:99px;padding:10px 16px;z-index:60;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="brandmark">m</span>misan<span class="sub">. pharmacy</span></div>
+    <div class="segmented" role="tablist" aria-label="Experience mode">
+      <button type="button" role="tab" id="beforeTab" aria-selected="false">Before</button>
+      <button type="button" role="tab" id="afterTab" aria-selected="true">After</button>
+    </div>
+    <div class="head-actions">
+      <button type="button" class="icon-btn" id="opsBtn" hidden>Reconciliation<span class="badge" id="opsBadge"></span></button>
+      <button type="button" class="icon-btn" id="resetBtn" aria-label="Start over">↺ Start over</button>
+    </div>
+  </div>
+</header>
+
+<main class="app">
+  <div class="app-card">
+    <div class="app-head">
+      <div class="who">misan<span>.</span> pharmacy</div>
+      <div class="meta" id="orderMeta"></div>
+    </div>
+    <div class="screen" id="screen"></div>
+  </div>
+  <p class="footnote">Interactive simulation with synthetic data. This is not an official Misan product and is not connected to a real payment provider.</p>
+</main>
+
+<div class="sheet-backdrop" id="sheetBackdrop"></div>
+<aside class="sheet" id="opsSheet" role="dialog" aria-modal="true" aria-labelledby="opsTitle">
+  <div class="sheet-inner">
+    <div class="sheet-head">
+      <h2 id="opsTitle">Reconciliation</h2>
+      <button type="button" class="icon-btn" id="opsClose">Close</button>
+    </div>
+    <p class="sheet-sub">Payment confirmation is not the same as settlement. Mismatches are held here until someone resolves them with a reason.</p>
+    <div id="excList"></div>
+  </div>
+</aside>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+/* ═══════════════════════════════════════════════════════════
+   DATA: demo counter queue (synthetic)
+   Each customer's payment resolves differently so every
+   recovery path can be explored without tester controls.
+   ═══════════════════════════════════════════════════════════ */
+const ORDERS = [
+  {
+    id:'ORD-2026-1042', customer:'Amina Yusuf', items:'Metformin 500mg ×2, BP monitor cuff, +1 item',
+    total:'₦48,500.00',
+    checks:['pending','paid'],
+    afterPaid:{ type:'Settlement record missing', detail:'Payment confirmed for the original attempt, but the bank settlement file has not been matched yet.' }
+  },
+  {
+    id:'ORD-2026-1043', customer:'Chidi Oke', items:'Amoxicillin 500mg · Vitamin C',
+    total:'₦12,300.00',
+    checks:['pending','failed'],
+    retryChecks:['paid']
+  },
+  {
+    id:'ORD-2026-1044', customer:'Bola Adeyemi', items:'Artemether syrup · ORS sachets ×4',
+    total:'₦7,950.00',
+    checks:['pending','pending'],
+    unresolved:{ type:'Unresolved payment outcome', detail:'The attempt is still unknown after repeated checks. Provider investigation is required before telling the customer anything.' }
+  }
+];
+
+/* ═══════════════════════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════════════════════ */
+function freshState(flow){
+  return {
+    flow: flow,
+    orderIdx: 0,
+    orderState: 'awaiting_payment',   // awaiting_payment | payment_pending | paid | payment_failed
+    attempt: null,                    // { id, state: unknown|confirmed_paid|confirmed_failed }
+    attemptSeq: 0,
+    checkIdx: 0,                      // status checks made on the current attempt
+    screen: 'checkout',
+    exceptions: [],
+    excSeq: 0,
+    chargeable: 0,
+    dupBlocks: 0
+  };
+}
+let S = freshState('after');
+const stores = { before: freshState('before'), after: freshState('after') };
+
+function order(){ return ORDERS[S.orderIdx % ORDERS.length]; }
+function nowStamp(){
+  const d = new Date();
+  return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODEL: payment safety rules
+   ═══════════════════════════════════════════════════════════ */
+function startPayment(){
+  const after = S.flow === 'after';
+  // Guard: never create a second chargeable attempt while the original is unresolved or paid
+  if (after && S.attempt && (S.attempt.state === 'unknown' || S.attempt.state === 'confirmed_paid')) {
+    S.dupBlocks += 1;
+    S.screen = 'blocked';
+    render();
+    toast(S.attempt.state === 'unknown'
+      ? 'Blocked: the original attempt is still unconfirmed.'
+      : 'Blocked: this order is already paid.');
+    return false;
+  }
+  if (after && S.orderState === 'paid') {
+    toast('Order already paid. No new charge is possible.');
+    return false;
+  }
+  S.attemptSeq += 1;
+  S.chargeable += 1;
+  S.attempt = { id:'PAY-' + order().id.split('-').pop() + '-' + String(S.attemptSeq).padStart(2,'0'), state:'unknown' };
+  S.checkIdx = 0;
+  S.orderState = 'payment_pending';
+  S.screen = 'timeout';
+  render();
+  return true;
+}
+
+function outcomeList(){
+  const o = order();
+  return (S.attemptSeq > 1 && o.retryChecks) ? o.retryChecks : o.checks;
+}
+
+function checkStatus(){
+  S.screen = 'checking';
+  render();
+  setTimeout(resolveCheck, 550);
+}
+
+function resolveCheck(){
+  const list = outcomeList();
+  const outcome = list[Math.min(S.checkIdx, list.length - 1)];
+  S.checkIdx += 1;
+  const exhausted = S.checkIdx >= list.length;
+
+  if (outcome === 'paid') {
+    S.attempt.state = 'confirmed_paid';
+    S.orderState = 'paid';
+    const o = order();
+    if (o.afterPaid && !S.exceptions.some(function(e){ return e.orderId === o.id && e.type === o.afterPaid.type; })) {
+      pushException(o.afterPaid.type, o.afterPaid.detail);
+    }
+  } else if (outcome === 'failed') {
+    S.attempt.state = 'confirmed_failed';
+    S.orderState = 'payment_failed';
+  } else {
+    // still pending: a timeout is never a failure
+    const o = order();
+    if (exhausted && o.unresolved && !S.exceptions.some(function(e){ return e.orderId === o.id && e.type === o.unresolved.type; })) {
+      pushException(o.unresolved.type, o.unresolved.detail);
+    }
+  }
+  S.screen = 'result';
+  render();
+}
+
+function pushException(type, detail){
+  S.excSeq += 1;
+  S.exceptions.unshift({
+    id:'EXC-' + String(S.excSeq).padStart(3,'0'),
+    orderId: order().id,
+    attemptId: S.attempt ? S.attempt.id : 'n/a',
+    type: type,
+    detail: detail,
+    status:'open',
+    reason: null,
+    at: nowStamp()
+  });
+}
+
+function reviewException(id, action, reason){
+  const exc = S.exceptions.find(function(e){ return e.id === id; });
+  if (!exc) return;
+  if (action === 'review') {
+    if (exc.status === 'open') { exc.status = 'in_review'; toast(exc.id + ' assigned for review.'); }
+    else toast(exc.id + ' is already ' + exc.status.replace('_',' ') + '.');
+  } else if (action === 'resolve') {
+    if (exc.status === 'resolved') { toast('Already resolved.'); return; }
+    if (!reason || !reason.trim()) {
+      toast('A resolution reason is required. Silent resolution is not allowed.');
+      return false;
+    }
+    exc.status = 'resolved';
+    exc.reason = reason.trim();
+    toast(exc.id + ' resolved.');
+  }
+  renderOps();
+  renderHead();
+  return true;
+}
+
+function nextCustomer(){
+  S.orderIdx = (S.orderIdx + 1) % ORDERS.length;
+  S.orderState = 'awaiting_payment';
+  S.attempt = null;
+  S.attemptSeq = 0;
+  S.checkIdx = 0;
+  S.screen = 'checkout';
+  render();
+  toast(S.orderIdx === 0 ? 'Demo queue restarts from the first customer.' : 'Next customer, please.');
+}
+
+function resetAll(){
+  S = freshState(S.flow);
+  render();
+  toast('Checkout reset.');
+}
+
+function switchFlow(flow){
+  stores[S.flow] = S;
+  S = stores[flow];
+  render();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   VIEW
+   ═══════════════════════════════════════════════════════════ */
+const els = {
+  screen: document.getElementById('screen'),
+  orderMeta: document.getElementById('orderMeta'),
+  beforeTab: document.getElementById('beforeTab'),
+  afterTab: document.getElementById('afterTab'),
+  opsBtn: document.getElementById('opsBtn'),
+  opsBadge: document.getElementById('opsBadge'),
+  resetBtn: document.getElementById('resetBtn'),
+  opsSheet: document.getElementById('opsSheet'),
+  sheetBackdrop: document.getElementById('sheetBackdrop'),
+  opsClose: document.getElementById('opsClose'),
+  excList: document.getElementById('excList'),
+  toast: document.getElementById('toast')
+};
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function btn(label, action, kind){ return '<button type="button" class="btn ' + (kind||'primary') + '" data-action="' + action + '">' + label + '</button>'; }
+function pill(st){
+  const map = { awaiting_payment:['neutral','Awaiting payment'], payment_pending:['pending','Payment pending'], paid:['success','Paid'], payment_failed:['failed','Failed'] };
+  const m = map[st] || ['neutral', st];
+  return '<span class="status-pill ' + m[0] + '"><span class="dot"></span>' + m[1] + '</span>';
+}
+function attemptPill(st){
+  const map = { unknown:['pending','Pending'], confirmed_paid:['success','Confirmed paid'], confirmed_failed:['failed','Confirmed failed'] };
+  const m = map[st] || ['neutral', st];
+  return '<span class="status-pill ' + m[0] + '"><span class="dot"></span>' + m[1] + '</span>';
+}
+function amountCard(o){
+  return '<div class="amount-card"><div class="label">Order total</div><div class="amount">' + o.total + '</div><div class="recipient">' + esc(o.customer) + ' · ' + esc(o.items) + '</div></div>';
+}
+function orderDetails(extra){
+  const o = order();
+  return '<div class="detail-list">' +
+    '<div class="detail-row"><span>Order</span><strong>' + o.id + '</strong></div>' +
+    '<div class="detail-row"><span>Customer</span><strong>' + esc(o.customer) + '</strong></div>' +
+    (S.attempt ? '<div class="detail-row"><span>Attempt</span><strong>' + S.attempt.id + '</strong></div>' : '') +
+    (S.attempt ? '<div class="detail-row"><span>Attempt status</span><strong>' + attemptPill(S.attempt.state) + '</strong></div>' : '') +
+    (extra || '') +
+    '</div>';
+}
+function note(text){ return '<p class="flow-note">' + text + '</p>'; }
+
+function renderHead(){
+  const o = order();
+  els.orderMeta.textContent = 'Customer ' + ((S.orderIdx % ORDERS.length) + 1) + ' of ' + ORDERS.length + ' · ' + o.id;
+  els.beforeTab.setAttribute('aria-selected', S.flow === 'before' ? 'true' : 'false');
+  els.afterTab.setAttribute('aria-selected', S.flow === 'after' ? 'true' : 'false');
+  const open = S.exceptions.filter(function(e){ return e.status !== 'resolved'; }).length;
+  if (S.flow === 'after') {
+    els.opsBtn.hidden = false;
+    els.opsBadge.textContent = open > 0 ? String(open) : '';
+  } else {
+    els.opsBtn.hidden = true;
+  }
+}
+
+function render(){
+  renderHead();
+  els.screen.innerHTML = S.flow === 'before' ? renderBefore() : renderAfter();
+}
+
+/* ── BEFORE (baseline) ─────────────────────────────────── */
+function renderBefore(){
+  const o = order();
+  const st = S.screen;
+  if (st === 'timeout') {
+    return '<button type="button" class="back" data-action="home">← Checkout</button>' +
+      '<div class="step-label"><span class="step-num">2</span> Payment request</div>' +
+      '<h2>Payment didn’t go through</h2>' +
+      '<p class="subcopy">The request timed out. You can try again.</p>' +
+      amountCard(o) +
+      '<div class="notice warn"><strong>What now?</strong><p>The interface treats the missing confirmation like a soft failure and offers a retry straight away.</p></div>' +
+      note('<strong>Baseline behaviour:</strong> no confirmation is treated like a failure, so the obvious next tap can create a second charge even if the first one actually succeeded.') +
+      '<div class="actions">' + btn('Try payment again','retry') + btn('Back to checkout','home','quiet') + '</div>';
+  }
+  if (st === 'retry') {
+    return '<button type="button" class="back" data-action="timeout">← Back</button>' +
+      '<div class="step-label"><span class="step-num">3</span> Second attempt</div>' +
+      '<h2>Submit payment again?</h2>' +
+      '<p class="subcopy">You are about to repeat the request before the first attempt has a confirmed outcome.</p>' +
+      amountCard(o) +
+      '<div class="notice bad"><strong>Duplicate-charge risk</strong><p>The first request may still be processing. This flow does not check it before retrying.</p></div>' +
+      '<div class="actions">' + btn('Confirm another attempt','duplicate','danger') + btn('Cancel','timeout','secondary') + '</div>';
+  }
+  if (st === 'duplicate') {
+    const second = 'PAY-' + o.id.split('-').pop() + '-' + String(S.attemptSeq).padStart(2,'0');
+    return '<div class="step-label"><span class="step-num">!</span> Possible duplicate</div>' +
+      '<h2>Two charges may exist</h2>' +
+      '<p class="subcopy">Retrying before checking the original attempt may have charged the customer twice.</p>' +
+      '<div class="detail-list">' +
+        '<div class="detail-row"><span>First attempt</span><strong>PAY-' + o.id.split('-').pop() + '-01</strong></div>' +
+        '<div class="detail-row"><span>Second attempt</span><strong>' + second + '</strong></div>' +
+        '<div class="detail-row"><span>Order state</span><strong>' + pill(S.orderState) + '</strong></div>' +
+      '</div>' +
+      '<div class="notice bad"><strong>Operations must untangle this</strong><p>Support has to inspect both references and confirm the real outcome before telling the customer anything.</p></div>' +
+      note('<strong>The cost of guessing:</strong> the customer may see two charges, and staff have no single reference to check. The improved flow resolves uncertainty before any retry.') +
+      '<div class="actions">' + btn('Next customer','next','primary') + btn('Start over','reset','quiet') + '</div>';
+  }
+  // checkout
+  return '<div class="step-label"><span class="step-num">1</span> Checkout</div>' +
+    '<h2>Collect payment</h2>' +
+    '<p class="subcopy">Order at the counter</p>' +
+    amountCard(o) +
+    '<div class="actions">' + btn('Take payment','start') + btn('Start over','reset','quiet') + '</div>';
+}
+
+/* ── AFTER (improved) ──────────────────────────────────── */
+function renderAfter(){
+  const o = order();
+  const st = S.screen;
+
+  if (st === 'timeout') {
+    // Back-navigation from a confirmed result: reflect the real attempt state
+    if (S.attempt && S.attempt.state === 'confirmed_paid') {
+      return '<button type="button" class="back" data-action="checkout">← Checkout</button>' +
+        '<div class="step-label"><span class="step-num">2</span> Payment details</div>' +
+        '<h2>Payment confirmed</h2>' +
+        '<p class="subcopy">This attempt reached a final confirmed outcome.</p>' +
+        amountCard(o) +
+        orderDetails() +
+        '<div class="notice good"><strong>No further action needed</strong><p>The provider confirms this payment. No new charge is possible.</p></div>' +
+        '<div class="actions">' + btn('Next customer','next') + btn('Back to result','result','secondary') + '</div>';
+    }
+    if (S.attempt && S.attempt.state === 'confirmed_failed') {
+      return '<button type="button" class="back" data-action="checkout">← Checkout</button>' +
+        '<div class="step-label"><span class="step-num">2</span> Payment details</div>' +
+        '<h2>Payment failed</h2>' +
+        '<p class="subcopy">This attempt reached a final confirmed outcome.</p>' +
+        amountCard(o) +
+        orderDetails() +
+        '<div class="notice bad"><strong>Retry now safe</strong><p>The provider confirmed a failure. A new chargeable attempt is allowed.</p></div>' +
+        '<div class="actions">' + btn('Start a new payment','start') + btn('Back to result','result','secondary') + '</div>';
+    }
+    return '<button type="button" class="back" data-action="home">← Checkout</button>' +
+      '<div class="step-label"><span class="step-num">2</span> Payment status</div>' +
+      '<h2>Still confirming this payment</h2>' +
+      '<p class="subcopy">The request timed out, but that does not mean it failed.</p>' +
+      amountCard(o) +
+      orderDetails() +
+      '<div class="notice warn"><strong>Don’t charge again yet</strong><p>We check the original attempt first. A status check never creates a new charge.</p></div>' +
+      note('<strong>Improvement:</strong> the primary action checks the original attempt reference instead of pushing a retry.') +
+      '<div class="actions">' + btn('Check payment status','check') + btn('Get help with this payment','support','secondary') + '</div>';
+  }
+
+  if (st === 'checking') {
+    return '<button type="button" class="back" data-action="timeout">← Back</button>' +
+      '<div class="step-label"><span class="step-num">·</span> Status check</div>' +
+      '<h2>Checking the original attempt</h2>' +
+      '<p class="subcopy">Looking up ' + (S.attempt ? S.attempt.id : '') + '. No new payment has been created.</p>' +
+      '<div class="checking"><span class="spinner" aria-hidden="true"></span> Requesting the latest provider status…</div>' +
+      '<div class="actions">' + btn('Back to payment details','timeout','quiet') + '</div>';
+  }
+
+  if (st === 'result') {
+    const a = S.attempt ? S.attempt.state : 'unknown';
+    const paid = a === 'confirmed_paid', failed = a === 'confirmed_failed';
+    const title = paid ? 'Payment completed' : failed ? 'Payment failed' : 'Still waiting for confirmation';
+    const msg = paid
+      ? 'The provider confirms this payment. The order is marked paid, and no further charge is possible.'
+      : failed
+        ? 'The provider confirmed a failure. A new attempt is now safe.'
+        : 'No final outcome yet. Keep this reference and check again, or hand it to support.';
+    const actions = paid
+      ? btn('Next customer','next') + (hasOpenException() ? btn('Review reconciliation','ops','secondary') : '')
+      : failed
+        ? btn('Start a new payment','start') + btn('Get help','support','secondary')
+        : btn('Check again','check') + btn('Get help','support','secondary');
+    return '<button type="button" class="back" data-action="timeout">← Payment details</button>' +
+      '<div class="step-label"><span class="step-num">3</span> Confirmed result</div>' +
+      '<h2>' + title + '</h2>' +
+      '<p class="subcopy">Status check on the original attempt.</p>' +
+      amountCard(o) +
+      orderDetails() +
+      '<div class="notice ' + (paid ? 'good' : failed ? 'bad' : 'warn') + '"><strong>' +
+        (paid ? 'No further action needed' : failed ? 'Retry now safe' : 'Do not retry yet') + '</strong><p>' + msg + '</p></div>' +
+      (paid && hasOpenException()
+        ? '<div class="notice neutral"><strong>Settlement not matched yet</strong><p>Confirmation is not settlement. An item is waiting in Reconciliation.</p></div>'
+        : '') +
+      note(paid
+        ? '<strong>Safe completion:</strong> paid from the original reference, never from a second charge.'
+        : failed
+          ? '<strong>Recovery path:</strong> only a confirmed failure unlocks a new chargeable attempt.'
+          : '<strong>Uncertainty preserved:</strong> pending stays pending: same reference, no new charge.') +
+      '<div class="actions">' + actions + '</div>';
+  }
+
+  if (st === 'support') {
+    return '<button type="button" class="back" data-action="timeout">← Payment details</button>' +
+      '<div class="step-label"><span class="step-num">i</span> Support handoff</div>' +
+      '<h2>We can trace this payment</h2>' +
+      '<p class="subcopy">Share the reference below so operations can investigate the original attempt.</p>' +
+      '<div class="amount-card"><div class="label">Reference to share</div><div class="amount" style="font-size:19px">' + (S.attempt ? S.attempt.id : 'n/a') + '</div><div class="recipient">' + o.total + ' · ' + esc(o.customer) + '</div></div>' +
+      '<div class="notice neutral"><strong>What happens next</strong><p>Operations checks the provider record. Keep this reference; don’t create another request while the outcome is unknown.</p></div>' +
+      '<div class="actions">' + btn('Return to payment','timeout') + btn('Next customer','next','quiet') + '</div>';
+  }
+
+  if (st === 'blocked') {
+    return '<button type="button" class="back" data-action="home">← Checkout</button>' +
+      '<div class="step-label"><span class="step-num">!</span> Attempt blocked</div>' +
+      '<h2>New charge prevented</h2>' +
+      '<p class="subcopy">The original attempt must be resolved before another chargeable attempt can be created.</p>' +
+      orderDetails() +
+      '<div class="notice good"><strong>Safety rule enforced</strong><p>Checking status never creates a charge. A new attempt is allowed only after a confirmed failure.</p></div>' +
+      note('<strong>Guardrail:</strong> a second charge is refused while the original attempt is unresolved or already paid.') +
+      '<div class="actions">' + btn('Check payment status','check') + btn('Get help','support','secondary') + '</div>';
+  }
+
+  // checkout
+  let main, sub = 'Order at the counter';
+  if (S.orderState === 'paid') {
+    main = '<h2>Order paid</h2>' +
+      '<div class="notice good"><strong>Already paid</strong><p>Settled at the confirmation layer. No further chargeable attempt is possible.</p></div>' +
+      (hasOpenException()
+        ? '<div class="notice neutral"><strong>One item in Reconciliation</strong><p>Confirmation arrived, settlement has not been matched yet.</p></div>'
+        : '') +
+      '<div class="actions">' + btn('Next customer','next') + (hasOpenException() ? btn('Review reconciliation','ops','secondary') : '') + '</div>';
+  } else if (S.orderState === 'payment_failed' && S.attempt && S.attempt.state === 'confirmed_failed') {
+    main = '<h2>Collect payment</h2>' +
+      '<div class="notice bad"><strong>Payment failed (confirmed)</strong><p>The provider confirmed the failure. A new attempt can be started safely.</p></div>' +
+      orderDetails() +
+      '<div class="actions">' + btn('Start a new payment','start') + btn('Get help','support','secondary') + '</div>';
+  } else if (S.orderState === 'payment_pending' && S.attempt && S.attempt.state === 'unknown') {
+    main = '<h2>Collect payment</h2>' +
+      '<div class="notice warn"><strong>Payment pending</strong><p>An attempt is unconfirmed. Check its status before doing anything else.</p></div>' +
+      orderDetails() +
+      '<div class="actions">' + btn('Open payment status','timeout') + btn('Take payment','start','quiet') + '</div>';
+  } else {
+    main = '<h2>Collect payment</h2>' +
+      '<div class="actions" style="margin-top:auto">' + btn('Start digital payment','start') + '</div>';
+  }
+  return '<div class="step-label"><span class="step-num">1</span> Checkout</div>' +
+    (sub ? '<p class="subcopy">' + sub + '</p>' : '') +
+    amountCard(o) +
+    '<div class="detail-list"><div class="detail-row"><span>Order</span><strong>' + o.id + '</strong></div>' +
+    '<div class="detail-row"><span>Order state</span><strong>' + pill(S.orderState) + '</strong></div></div>' +
+    main;
+}
+
+function hasOpenException(){
+  return S.exceptions.some(function(e){ return e.status !== 'resolved' && e.orderId === order().id; });
+}
+
+/* ── ops sheet ─────────────────────────────────────────── */
+function renderOps(){
+  if (!S.exceptions.length) {
+    els.excList.innerHTML = '<p class="sheet-empty">No reconciliation items. They appear here when a confirmed payment has no matched settlement, or a payment stays unresolved.</p>';
+    return;
+  }
+  els.excList.innerHTML = S.exceptions.map(function(e){
+    const statusCls = e.status === 'resolved' ? 'success' : e.status === 'in_review' ? 'pending' : 'neutral';
+    const statusTxt = e.status === 'in_review' ? 'In review' : e.status.charAt(0).toUpperCase() + e.status.slice(1);
+    let actions = '';
+    if (e.status === 'open') {
+      actions = '<button type="button" class="btn secondary" data-exc-review="' + e.id + '">Mark in review</button>' +
+        '<button type="button" class="btn primary" data-exc-resolve="' + e.id + '">Resolve…</button>';
+    } else if (e.status === 'in_review') {
+      actions = '<button type="button" class="btn primary" data-exc-resolve="' + e.id + '">Resolve…</button>';
+    }
+    return '<div class="exc">' +
+      '<div class="exc-top"><div><div class="exc-type">' + esc(e.type) + '</div>' +
+      '<div style="font-size:11px;color:var(--muted);margin-top:2px">' + e.id + ' · ' + e.orderId + ' · ' + e.attemptId + ' · ' + e.at + '</div></div>' +
+      '<span class="status-pill ' + statusCls + '"><span class="dot"></span>' + statusTxt + '</span></div>' +
+      '<p class="exc-detail">' + esc(e.detail) + '</p>' +
+      (e.reason ? '<p class="exc-reason">Resolution: ' + esc(e.reason) + '</p>' : '') +
+      (actions ? '<div class="exc-actions">' + actions + '</div>' : '') +
+      '<div class="resolve-row" data-resolve-row="' + e.id + '" hidden>' +
+        '<input type="text" placeholder="Resolution reason (required)" aria-label="Resolution reason for ' + e.id + '" maxlength="160">' +
+        '<button type="button" class="btn primary" data-exc-confirm="' + e.id + '">Confirm</button>' +
+      '</div>' +
+      '</div>';
+  }).join('');
+}
+
+function openOps(){
+  renderOps();
+  els.opsSheet.classList.add('open');
+  els.sheetBackdrop.classList.add('open');
+  els.opsClose.focus();
+}
+function closeOps(){
+  els.opsSheet.classList.remove('open');
+  els.sheetBackdrop.classList.remove('open');
+  els.opsBtn.focus();
+}
+
+/* ── toast ─────────────────────────────────────────────── */
+let toastTimer = null;
+function toast(msg){
+  els.toast.textContent = msg;
+  els.toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ els.toast.classList.remove('show'); }, 2600);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   EVENTS
+   ═══════════════════════════════════════════════════════════ */
+els.screen.addEventListener('click', function(e){
+  const b = e.target.closest('button[data-action]');
+  if (!b) return;
+  const a = b.dataset.action;
+  if (a === 'start') startPayment();
+  else if (a === 'retry') { S.screen = 'retry'; render(); }
+  else if (a === 'duplicate') {
+    // Before flow: blind second chargeable attempt: the baseline bug
+    S.attemptSeq += 1;
+    S.chargeable += 1;
+    S.attempt = { id:'PAY-' + order().id.split('-').pop() + '-' + String(S.attemptSeq).padStart(2,'0'), state:'unknown' };
+    S.orderState = 'payment_pending';
+    S.screen = 'duplicate';
+    render();
+  }
+  else if (a === 'check') checkStatus();
+  else if (a === 'support') { S.screen = 'support'; render(); }
+  else if (a === 'home') { S.screen = 'checkout'; render(); }
+  else if (a === 'checkout') { S.screen = 'checkout'; render(); }
+  else if (a === 'result') { S.screen = 'result'; render(); }
+  else if (a === 'timeout') { S.screen = 'timeout'; render(); }
+  else if (a === 'next') nextCustomer();
+  else if (a === 'reset') resetAll();
+  else if (a === 'ops') openOps();
+});
+
+els.beforeTab.addEventListener('click', function(){ switchFlow('before'); });
+els.afterTab.addEventListener('click', function(){ switchFlow('after'); });
+els.resetBtn.addEventListener('click', resetAll);
+els.opsBtn.addEventListener('click', openOps);
+els.opsClose.addEventListener('click', closeOps);
+els.sheetBackdrop.addEventListener('click', closeOps);
+
+els.excList.addEventListener('click', function(e){
+  const rev = e.target.closest('[data-exc-review]');
+  const res = e.target.closest('[data-exc-resolve]');
+  const conf = e.target.closest('[data-exc-confirm]');
+  if (rev) reviewException(rev.dataset.excReview, 'review');
+  else if (res) {
+    const row = els.excList.querySelector('[data-resolve-row="' + res.dataset.excResolve + '"]');
+    if (row) {
+      row.hidden = false;
+      row.querySelector('input').focus();
+    }
+  } else if (conf) {
+    const row = els.excList.querySelector('[data-resolve-row="' + conf.dataset.excConfirm + '"]');
+    const input = row ? row.querySelector('input') : null;
+    const ok = reviewException(conf.dataset.excConfirm, 'resolve', input ? input.value : '');
+    if (ok !== false && input) input.value = '';
+  }
+});
+
+els.excList.addEventListener('keydown', function(e){
+  if (e.key === 'Enter') {
+    const input = e.target.closest('.resolve-row input');
+    if (input) {
+      const row = input.closest('.resolve-row');
+      const id = row.dataset.resolveRow;
+      const ok = reviewException(id, 'resolve', input.value);
+      if (ok !== false) input.value = '';
+    }
+  }
+});
+
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape' && els.opsSheet.classList.contains('open')) closeOps();
+});
+
+/* boot */
+render();
+renderOps();
+</script>
+</body>
+</html>

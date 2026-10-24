@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Paywell QA · Simulation evidence</title>
+<style>
+:root{--navy:#10243a;--navy2:#193650;--paper:#f5f6f2;--white:#fff;--ink:#172a3b;--muted:#687786;--line:#dce3e7;--green:#167d63;--green-soft:#e7f5ef;--amber:#9b6415;--amber-soft:#fff3dc;--red:#a63d42;--red-soft:#fff0ef;--blue:#2c6e9e;--blue-soft:#eaf1f7}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.45 Inter,ui-sans-serif,system-ui,sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #3b9cdb;outline-offset:2px}
+button:disabled{opacity:.45;cursor:not-allowed}
+[hidden]{display:none!important}
+.wrap{max-width:1080px;margin:0 auto;padding:18px 16px 60px}
+header.top{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;justify-content:space-between;margin-bottom:14px}
+header.top h1{margin:0;font-size:20px;letter-spacing:-.03em}
+header.top .meta{font-size:11.5px;color:var(--muted)}
+.card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:14px;box-shadow:0 6px 22px rgba(16,36,58,.05)}
+.card h2{margin:0 0 10px;font-size:14px;letter-spacing:-.01em}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.grow{flex:1;min-width:220px}
+label.small{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px}
+.btn{border:0;border-radius:10px;padding:10px 16px;font-weight:750;font-size:13px;min-height:40px;background:var(--navy);color:#fff}
+.btn.secondary{background:var(--white);color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:var(--red);color:#fff}
+.btn.ghost{background:transparent;color:var(--blue)}
+.btn.sm{padding:6px 10px;min-height:32px;font-size:12px}
+input[type=number],select{border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:var(--white);min-height:40px}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{border:1px solid var(--line);background:var(--white);border-radius:99px;padding:7px 13px;font-size:12.5px;font-weight:700;min-height:34px}
+.pill[aria-pressed="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.note{font-size:12px;color:var(--muted);margin-top:8px}
+.status-line{display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:13px}
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:4px 10px;font-size:12px;font-weight:800}
+.badge.run{background:var(--blue-soft);color:var(--blue)}
+.badge.ok{background:var(--green-soft);color:var(--green)}
+.badge.bad{background:var(--red-soft);color:var(--red)}
+.badge.warn{background:var(--amber-soft);color:var(--amber)}
+.bar{height:8px;border-radius:99px;background:#e7ecea;overflow:hidden;flex:1;min-width:160px}
+.bar i{display:block;height:100%;background:var(--navy);width:0;transition:width .3s}
+.current{font-size:13px}
+.current b{letter-spacing:-.01em}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fafbf8}
+.kpi .v{font-size:22px;font-weight:850;letter-spacing:-.03em}
+.kpi .k{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.kpi .d{font-size:11px;color:var(--muted);margin-top:3px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:7px 8px;border-bottom:1px solid var(--line)}
+td{padding:7px 8px;border-bottom:1px solid #eef1f2;vertical-align:top}
+tr.rowlink{cursor:pointer}
+tr.rowlink:hover{background:#f6f8f7}
+.s{font-weight:800;font-size:12px}
+.s.PASS{color:var(--green)} .s.FAIL{color:var(--red)} .s.BLOCKED{color:var(--amber)}
+.s.INCONCLUSIVE{color:var(--blue)} .s.SKIPPED{color:var(--muted)} .s.RUNNING{color:var(--blue)} .s.pending{color:var(--muted)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+.fail-item{border:1px solid #f0c4c0;background:var(--red-soft);border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:13px}
+.fail-item b{display:block;margin-bottom:3px}
+.fail-item .why{font-size:12px;color:#7d3136}
+details.def{font-size:12.5px;color:var(--muted);margin-top:8px}
+details.def summary{cursor:pointer;font-weight:700;color:var(--ink)}
+table.cmp td.n{text-align:right;font-variant-numeric:tabular-nums}
+table.cmp th.n{text-align:right}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(16,36,58,.45);display:flex;align-items:flex-start;justify-content:center;padding:4vh 12px;z-index:50;overflow:auto}
+.panel{background:var(--white);border-radius:16px;max-width:760px;width:100%;padding:16px 18px 20px;box-shadow:0 20px 60px rgba(16,36,58,.3)}
+.panel h3{margin:0 0 4px;font-size:16px;letter-spacing:-.02em}
+.panel .sub{font-size:12px;color:var(--muted);margin-bottom:10px}
+.assert{border-left:3px solid var(--line);padding:6px 10px;margin:6px 0;font-size:13px;background:#fafbf8;border-radius:0 8px 8px 0}
+.assert.ok{border-color:var(--green)}
+.assert.no{border-color:var(--red);background:var(--red-soft)}
+.assert .det{font-size:12px;color:var(--muted)}
+.assert.no .det{color:#7d3136}
+pre{background:#0f1c2b;color:#dfe8ee;border-radius:10px;padding:10px 12px;font-size:12px;overflow:auto}
+a{color:var(--blue)}
+.foot{font-size:11.5px;color:var(--muted);line-height:1.55}
+.empty{color:var(--muted);font-size:13px;padding:8px 0}
+@media (max-width:640px){.grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div>
+    <h1>Paywell QA · Simulation evidence</h1>
+    <div class="meta" id="prodMeta">loading…</div>
+  </div>
+  <div class="meta" id="engineMeta"></div>
+</header>
+
+<!-- ── run configuration ─────────────────────────────── -->
+<section class="card" id="cfgCard">
+  <h2>1 · Run configuration</h2>
+  <div class="row">
+    <div class="grow">
+      <label class="small" for="execCount">Scenario executions</label>
+      <div class="pills" id="presetPills"></div>
+      <div class="row" style="margin-top:8px">
+        <input type="number" id="execCount" min="1" max="2000" value="10" style="width:110px" aria-label="Custom execution count">
+        <span class="note" style="margin:0">custom count</span>
+      </div>
+    </div>
+    <div>
+      <label class="small" for="modeSel">Experience mode</label>
+      <select id="modeSel"><option value="all">Both (paired)</option><option value="after">Improved only</option><option value="before">Baseline only</option></select>
+    </div>
+    <div>
+      <label class="small" for="personaSel">Persona</label>
+      <select id="personaSel"><option value="all">All personas</option></select>
+    </div>
+    <div>
+      <label class="small" for="catSel">Category</label>
+      <select id="catSel"><option value="all">All categories</option></select>
+    </div>
+    <div>
+      <label class="small" for="sevSel">Severity</label>
+      <select id="sevSel"><option value="all">All severities</option><option value="critical">Critical only</option><option value="major">Major only</option></select>
+    </div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <button class="btn" id="startBtn">Start visible run</button>
+    <button class="btn danger" id="cancelBtn" hidden>Cancel run</button>
+    <button class="btn secondary" id="resumeBtn" hidden>Resume incomplete run</button>
+    <button class="btn secondary" id="checkBrowserBtn">Check browser</button>
+    <span class="note" id="planNote" style="margin:0"></span>
+  </div>
+  <p class="note">Execution strategy: <b>single visible Chrome window, one execution at a time</b> (so you can watch every interaction). Trade-off: slower than parallel workers — parallel background runs would mean most executions are NOT individually observable, so they are not the default. Presets are scaled for local headed runs (5–50; the full unique suite is 18 executions).</p>
+  <details class="def"><summary>Counting definitions (executions vs unique tests vs personas)</summary>
+    <p style="margin:6px 0"><b>Unique scenario definitions:</b> <span id="uDefs">–</span> · <b>mode variants (scenario×mode):</b> <span id="uVariants">–</span> · <b>personas:</b> <span id="uPersonas">–</span> · <b>this run's executions:</b> <span id="uExecs">–</span> (cycling the filtered variant list; repeats count as separate executions with the same seed).</p>
+  </details>
+</section>
+
+<!-- ── live status ───────────────────────────────────── -->
+<section class="card" id="liveCard" hidden>
+  <h2>2 · Live run</h2>
+  <div class="status-line">
+    <span class="badge run" id="runBadge">running</span>
+    <span class="mono" id="runId">–</span>
+    <span id="progText">0 / 0</span>
+    <span class="bar"><i id="progBar"></i></span>
+    <span id="elapsed">0s</span>
+  </div>
+  <div class="current" style="margin-top:8px" id="currentLine">–</div>
+  <p class="note">The browser window in front of you IS the test runner. Failures keep their screenshot + Playwright trace. A run error (Chrome/app failed to start) is reported as an environment problem, never as a passing test.</p>
+</section>
+
+<!-- ── metrics ───────────────────────────────────────── -->
+<section class="card" id="metricsCard" hidden>
+  <h2>3 · Metrics <span class="note" style="font-weight:400;text-transform:none" id="metricRunRef"></span></h2>
+  <div class="grid" id="kpiGrid"></div>
+  <p class="note" id="denomNote"></p>
+  <details class="def"><summary>All metric definitions (numerator / denominator / interpretation)</summary>
+    <table id="defTable"><thead><tr><th>Metric</th><th>Definition</th><th class="n">Value</th></tr></thead><tbody></tbody></table>
+  </details>
+</section>
+
+<!-- ── comparison ────────────────────────────────────── -->
+<section class="card" id="cmpCard" hidden>
+  <h2>4 · Baseline vs improved (paired)</h2>
+  <table class="cmp">
+    <thead><tr><th>Measure</th><th class="n">Before</th><th class="n">After</th><th class="n">Absolute diff</th><th>Relative</th></tr></thead>
+    <tbody id="cmpBody"></tbody>
+  </table>
+  <p class="note" id="cmpNote"></p>
+</section>
+
+<!-- ── failures ──────────────────────────────────────── -->
+<section class="card" id="failCard" hidden>
+  <h2>5 · Critical failures &amp; probes</h2>
+  <div id="failList"></div>
+</section>
+
+<!-- ── results ───────────────────────────────────────── -->
+<section class="card" id="tableCard" hidden>
+  <h2>6 · Scenario results</h2>
+  <div class="row" style="margin-bottom:8px">
+    <select id="statusFilter" aria-label="Filter by status">
+      <option value="all">All statuses</option><option value="FAIL">Failures</option><option value="PASS">Passed</option>
+      <option value="BLOCKED">Blocked</option><option value="INCONCLUSIVE">Inconclusive</option>
+    </select>
+    <span class="note" style="margin:0" id="tableCount"></span>
+    <span class="grow"></span>
+    <a class="btn secondary" id="exportJson" download>Export JSON</a>
+    <a class="btn secondary" id="exportCsv" download>Export CSV</a>
+  </div>
+  <div style="overflow-x:auto">
+    <table>
+      <thead><tr><th>#</th><th>Scenario</th><th>Mode</th><th>Persona</th><th>Severity</th><th>Status</th><th class="n">ms</th></tr></thead>
+      <tbody id="resBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── disclosures ───────────────────────────────────── -->
+<section class="card">
+  <h2>What this evidence is — and is not</h2>
+  <p class="foot">
+    <b>Synthetic data, mock integrations.</b> The product is a single-file prototype: provider responses, latencies and settlement files are deterministic simulation, not a real payment backend. These results validate the mock implementation and its tested UI behaviour only.<br>
+    <b>Functional verification, not usability research.</b> Scripted executions measure whether defined assertions hold in this build; they are not user research, production reliability data, revenue/loss-prevention evidence, or model validation.<br>
+    <b>Intentional probes excluded.</b> The acceptance probe (M01) deliberately asserts a false statement to prove failures surface; it is excluded from every product metric above and reported in its own section.<br>
+    <b>Persistence:</b> runs are stored on this machine under <span class="mono">qa/results/runs/</span> (JSON) with screenshots/traces per failure — they survive a refresh. Deploying only the static page to a host cannot launch a visible browser there: run the local runner (<span class="mono">cd qa &amp;&amp; npm install &amp;&amp; npm start</span>) and open <span class="mono">/qa</span>.
+  </p>
+</section>
+
+</div>
+
+<!-- detail modal -->
+<div class="modal" id="modal" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <div class="row" style="justify-content:space-between">
+      <h3 id="mTitle">–</h3>
+      <button class="btn ghost sm" id="mClose">Close</button>
+    </div>
+    <div class="sub" id="mSub"></div>
+    <div id="mExpected"></div>
+    <div id="mAsserts"></div>
+    <div id="mObs"></div>
+    <div id="mErr"></div>
+    <div id="mArts" class="row" style="margin-top:10px"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn secondary sm" id="mRerun">Rerun this case (same seed)</button>
+      <span class="note" style="margin:0" id="mRerunNote"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+let META = null, currentRunId = null, currentData = null, pollTimer = null, selectedExec = null;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+async function api(path, opts) {
+  const r = await fetch(path, opts);
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error((data.error || r.statusText));
+  return data;
+}
+
+/* ── boot ── */
+async function boot() {
+  META = await api('/api/meta');
+  $('prodMeta').textContent = 'product ' + META.product.file + ' · sha256:' + META.product.sha256 + ' · tested ' + META.product.testedOn + ' · seed ' + META.seed + ' · synthetic data only';
+  $('uDefs').textContent = META.scenarios.length;
+  $('uVariants').textContent = META.variants;
+  $('uPersonas').textContent = META.personas.length;
+  // preset pills
+  const pp = $('presetPills');
+  META.presets.forEach(n => {
+    const b = document.createElement('button');
+    b.className = 'pill'; b.type = 'button'; b.textContent = n;
+    b.setAttribute('aria-pressed', String(n === 10));
+    b.onclick = () => { $('execCount').value = n; [...pp.children].forEach(c => c.setAttribute('aria-pressed', String(c === b))); };
+    pp.appendChild(b);
+  });
+  const custom = document.createElement('button');
+  custom.className = 'pill'; custom.type = 'button'; custom.textContent = 'Custom';
+  custom.setAttribute('aria-pressed', 'false');
+  custom.onclick = () => { [...pp.children].forEach(c => c.setAttribute('aria-pressed', String(c === custom))); $('execCount').focus(); };
+  pp.appendChild(custom);
+  $('execCount').oninput = () => [...pp.children].forEach(c => c.setAttribute('aria-pressed', 'false'));
+  // filters
+  META.personas.forEach(p => { const o = document.createElement('option'); o.value = p.id; o.textContent = p.name + ' — ' + p.profile.split(':')[0]; $('personaSel').appendChild(o); });
+  META.categories.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; $('catSel').appendChild(o); });
+  ['modeSel','personaSel','catSel','sevSel'].forEach(id => $(id).onchange = updatePlanNote);
+  $('execCount').oninput = updatePlanNote;
+  updatePlanNote();
+  // previous runs?
+  if (META.runs.length) {
+    const latest = META.runs[0];
+    if (latest.status === 'cancelled') $('resumeBtn').hidden = false, $('resumeBtn').dataset.run = latest.runId;
+    selectRun(latest.runId);
+    if (latest.status === 'running') startPolling(latest.runId);
+  }
+  updatePlanNote();
+}
+
+function selectedScenarios() {
+  let list = META.scenarios.slice();
+  const p = $('personaSel').value, c = $('catSel').value, sev = $('sevSel').value;
+  if (p !== 'all') list = list.filter(s => s.persona === p);
+  if (c !== 'all') list = list.filter(s => s.category === c);
+  if (sev !== 'all') list = list.filter(s => s.severity === sev);
+  const mode = $('modeSel').value;
+  return list.filter(s => mode === 'all' || s.modes.includes(mode)).map(s => s.id);
+}
+
+function updatePlanNote() {
+  const n = selectedScenarios();
+  const variants = META ? META.scenarios.filter(s => n.includes(s.id)).reduce((k, s) => k + s.modes.filter(m => $('modeSel').value === 'all' || m === $('modeSel').value).length, 0) : 0;
+  $('planNote').textContent = n.length + ' definitions selected → ' + variants + ' mode variants; ' + ($('execCount').value || 0) + ' executions will cycle them.';
+  $('uExecs').textContent = $('execCount').value;
+}
+
+/* ── run control ── */
+$('startBtn').onclick = async () => {
+  try {
+    const ids = selectedScenarios();
+    if (!ids.length) { alert('No scenario matches the current filters.'); return; }
+    const body = { executions: Number($('execCount').value) || 10, mode: $('modeSel').value, scenarioIds: ids, preset: 'custom' };
+    const r = await api('/api/runs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    currentRunId = r.runId;
+    $('startBtn').disabled = true; $('cancelBtn').hidden = false; $('resumeBtn').hidden = true;
+    $('liveCard').hidden = false;
+    startPolling(r.runId);
+  } catch (e) { alert('Could not start run: ' + e.message); }
+};
+
+$('cancelBtn').onclick = async () => {
+  try { await api('/api/runs/' + currentRunId + '/cancel', { method: 'POST' }); }
+  catch (e) { alert(e.message); }
+};
+
+$('resumeBtn').onclick = async () => {
+  try {
+    const id = $('resumeBtn').dataset.run;
+    await api('/api/runs/' + id + '/resume', { method: 'POST' });
+    currentRunId = id; $('resumeBtn').hidden = true; $('startBtn').disabled = true; $('cancelBtn').hidden = false;
+    startPolling(id);
+  } catch (e) { alert(e.message); }
+};
+
+$('checkBrowserBtn').onclick = async () => {
+  $('engineMeta').textContent = 'checking browser…';
+  const info = await api('/api/browser-check');
+  $('engineMeta').textContent = info.ok ? info.engine + ' · ' + info.version : 'UNAVAILABLE: ' + info.error + ' — ' + info.hint;
+};
+
+/* ── polling / rendering ── */
+function startPolling(runId) {
+  if (pollTimer) clearInterval(pollTimer);
+  const tick = async () => {
+    try {
+      const data = await api('/api/runs/' + runId);
+      renderRun(data);
+      if (data.run.status !== 'running' && data.run.status !== 'cancelling') {
+        clearInterval(pollTimer); pollTimer = null;
+        $('startBtn').disabled = false; $('cancelBtn').hidden = true;
+        if (data.run.status === 'cancelled') { $('resumeBtn').hidden = false; $('resumeBtn').dataset.run = runId; }
+      }
+    } catch (e) { /* keep polling quietly */ }
+  };
+  tick();
+  pollTimer = setInterval(tick, 450);
+}
+function stopPolling() { if (pollTimer) clearInterval(pollTimer); pollTimer = null; }
+
+async function selectRun(runId) {
+  currentRunId = runId;
+  const data = await api('/api/runs/' + runId);
+  renderRun(data);
+  if (data.run.status === 'running') startPolling(runId);
+}
+
+function renderRun(data) {
+  currentData = data;
+  const run = data.run, m = data.metrics;
+  $('liveCard').hidden = false; $('metricsCard').hidden = false; $('cmpCard').hidden = false;
+  $('failCard').hidden = false; $('tableCard').hidden = false;
+
+  const badge = $('runBadge');
+  badge.textContent = run.status;
+  badge.className = 'badge ' + (run.status === 'completed' ? 'ok' : run.status === 'running' ? 'run' : run.status === 'error' || run.status === 'blocked' ? 'bad' : 'warn');
+  $('runId').textContent = run.runId;
+  const done = run.plan.filter(p => p.status === 'done').length;
+  $('progText').textContent = done + ' / ' + run.plan.length;
+  $('progBar').style.width = Math.round((done / run.plan.length) * 100) + '%';
+  const started = new Date(run.startedAt).getTime();
+  const ended = run.finishedAt ? new Date(run.finishedAt).getTime() : Date.now();
+  $('elapsed').textContent = Math.round((ended - started) / 1000) + 's';
+
+  // current execution
+  const running = run.executions.length < done || run.status === 'running';
+  const last = run.executions[run.executions.length - 1];
+  const cur = run.plan.find(p => p.status !== 'done');
+  $('currentLine').innerHTML = run.status === 'running'
+    ? 'Current: <b>' + esc(cur ? cur.scenarioId : '…') + '</b> · mode <b>' + esc(cur ? cur.mode : '') + '</b> · persona <b>' + esc(cur ? personaName(cur.scenarioId) : '') + '</b> — observing in the visible Chrome window.'
+    : (run.error ? '<span class="s FAIL">Environment error: ' + esc(run.error) + '</span>' : 'Last executed: ' + (last ? esc(last.scenarioId + ' · ' + last.status) : 'none'));
+
+  $('metricRunRef').textContent = '· ' + run.runId + ' · ' + run.config.executions + ' planned · product sha256:' + run.productVersion.sha256;
+  renderMetrics(m);
+  renderComparison(m);
+  renderFailures(m);
+  renderTable(run, m);
+  $('exportJson').href = '/api/runs/' + run.runId + '/export.json';
+  $('exportCsv').href = '/api/runs/' + run.runId + '/export.csv';
+}
+
+function personaName(scenarioId) {
+  const s = META.scenarios.find(x => x.id === scenarioId);
+  const p = META.personas.find(x => x.id === (s ? s.persona : ''));
+  return p ? p.name : '–';
+}
+
+function renderMetrics(m) {
+  const c = m.counts;
+  const cards = [
+    { k: 'Pass rate', v: (m.metrics.passRate.value == null ? '–' : m.metrics.passRate.value + '%'), d: m.metrics.passRate.n + ' / ' + m.metrics.passRate.d + ' executed' },
+    { k: 'Failures', v: c.fail, d: c.fail ? 'needs triage' : 'none' },
+    { k: 'Blocked', v: c.blocked, d: 'environment issues' },
+    { k: 'Critical failures', v: m.metrics.criticalFailures.value, d: 'severity=critical' },
+    { k: 'Critical rule violations', v: m.metrics.ruleViolations.value, d: m.metrics.ruleViolations.n + ' / ' + m.metrics.ruleViolations.d + ' safety cases' },
+    { k: 'Task completion', v: (m.metrics.taskCompletion.value == null ? '–' : m.metrics.taskCompletion.value + '%'), d: m.metrics.taskCompletion.n + ' / ' + m.metrics.taskCompletion.d },
+    { k: 'Recovery success', v: (m.metrics.recovery.value == null ? '–' : m.metrics.recovery.value + '%'), d: m.metrics.recovery.n + ' / ' + m.metrics.recovery.d },
+    { k: 'Dup-charge prevention (After)', v: (m.metrics.dupPrevention.byMode.after.value == null ? '–' : m.metrics.dupPrevention.byMode.after.value + '%'), d: m.metrics.dupPrevention.byMode.after.n + ' / ' + m.metrics.dupPrevention.byMode.after.d + ' eligible' },
+    { k: 'Dup-charge prevention (Before)', v: (m.metrics.dupPrevention.byMode.before.value == null ? '–' : m.metrics.dupPrevention.byMode.before.value + '%'), d: m.metrics.dupPrevention.byMode.before.n + ' / ' + m.metrics.dupPrevention.byMode.before.d + ' eligible' },
+    { k: 'Reproducibility', v: (m.metrics.reproducibility.value == null ? '–' : m.metrics.reproducibility.value + '%'), d: m.metrics.reproducibility.n + ' / ' + m.metrics.reproducibility.d + ' repeated groups' },
+    { k: 'Flaky / recovered', v: m.metrics.flaky.value, d: 'original failures preserved' },
+    { k: 'Executions', v: c.executed, d: c.notRun + ' not run · ' + m.unique.executedDefinitions + '/' + m.unique.scenarioDefinitions + ' defs' },
+    { k: 'Duration', v: m.metrics.duration.value + 's', d: 'wall clock, this run' },
+    { k: 'Coverage', v: '', d: m.metrics.coverage.value },
+    { k: 'Inconclusive', v: c.inconclusive, d: 'evidence insufficient' },
+    { k: 'Meta probes', v: m.counts.metaFailures + ' failed', d: 'intentional, excluded' }
+  ];
+  $('kpiGrid').innerHTML = cards.map(x =>
+    '<div class="kpi"><div class="k">' + esc(x.k) + '</div><div class="v">' + esc(x.v) + '</div><div class="d">' + esc(x.d) + '</div></div>').join('');
+  $('denomNote').textContent = m.denominatorNote;
+  const rows = Object.entries(m.metrics).map(([key, v]) => {
+    const val = v.value == null ? 'n/a' : (v.value + (v.unit || ''));
+    return '<tr><td>' + esc(v.label || key) + '</td><td>' + esc(v.def || '') + (v.interp ? '<br><span style="color:var(--muted)">' + esc(v.interp) + '</span>' : '') + '</td><td class="n">' + esc(val) + (v.n !== undefined && v.d !== undefined ? '<br><span style="color:var(--muted);font-size:11px">' + v.n + '/' + v.d + '</span>' : '') + '</td></tr>';
+  }).join('');
+  $('defTable').querySelector('tbody').innerHTML = rows;
+}
+
+function renderComparison(cmp) {
+  const rows = [
+    ['Executions', cmp.before.executions, cmp.after.executions, null, ''],
+    ['Pass rate', pct(cmp.before.passRate), pct(cmp.after.passRate), pts(cmp.absoluteDiff.passRatePts), cmp.relativeChange.passRate],
+    ['Duplicate-charge prevention (eligible cases)', pct(cmp.before.dupRate), pct(cmp.after.dupRate), pts(cmp.absoluteDiff.dupPreventionPts), cmp.relativeChange.dupPrevention],
+    ['Incorrect terminal presentation', pct(cmp.before.termBadRate), pct(cmp.after.termBadRate), pts(cmp.after.termBadRate == null || cmp.before.termBadRate == null ? null : cmp.after.termBadRate - cmp.before.termBadRate), 'lower is better'],
+    ['Critical failures', cmp.before.criticalFails, cmp.after.criticalFails, (cmp.after.criticalFails - cmp.before.criticalFails), '']
+  ];
+  $('cmpBody').innerHTML = rows.map(r =>
+    '<tr><td>' + esc(r[0]) + '</td><td class="n">' + esc(r[1]) + '</td><td class="n">' + esc(r[2]) + '</td><td class="n">' + esc(r[3] == null ? 'n/a' : (r[3] > 0 ? '+' : '') + r[3]) + '</td><td>' + esc(r[4] || '') + '</td></tr>').join('');
+  $('cmpNote').textContent = cmp.note + ' Trade-off: ' + cmp.tradeoff;
+}
+const pct = v => v == null ? 'n/a' : v + '%';
+const pts = v => v == null ? 'n/a' : (v > 0 ? '+' : '') + v + ' pts';
+
+function renderFailures(m) {
+  const parts = [];
+  const item = e => '<div class="fail-item"><b>' + esc(e.scenarioId + ' · ' + e.title) + ' <span class="s FAIL">FAIL</span></b>'
+    + '<div class="why">mode ' + esc(e.mode) + ' · persona ' + esc(e.persona) + ' · severity ' + esc(e.severity) + '</div>'
+    + e.failedAssertions.map(f => '<div class="why">· ' + esc(f) + '</div>').join('')
+    + (e.error ? '<div class="why mono">' + esc(e.error.split('\n')[0]) + '</div>' : '')
+    + '<div style="margin-top:6px"><button class="btn secondary sm" data-open="' + e.execId + '">Open detail</button></div></div>';
+  if (m.criticalFails.length) parts.push('<h2 style="font-size:13px">Critical failures</h2>' + m.criticalFails.map(item).join(''));
+  else parts.push('<p class="empty">No critical-severity failures in this run.</p>');
+  if (m.ruleFails.length) parts.push('<h2 style="font-size:13px">Safety/adversarial failures</h2>' + m.ruleFails.map(item).join(''));
+  if (m.metaFailures.length) parts.push('<h2 style="font-size:13px">Acceptance probes (intentional, excluded from metrics)</h2>' + m.metaFailures.map(item).join(''));
+  $('failList').innerHTML = parts.join('');
+  $('failList').querySelectorAll('[data-open]').forEach(b => b.onclick = () => openDetail(Number(b.dataset.open)));
+}
+
+function renderTable(run) {
+  const f = $('statusFilter').value;
+  const list = run.executions.filter(e => f === 'all' || e.status === f);
+  $('tableCount').textContent = list.length + ' of ' + run.executions.length + ' records' + (run.plan.some(p => p.status !== 'done') ? ' (' + run.plan.filter(p => p.status !== 'done').length + ' not run)' : '');
+  $('resBody').innerHTML = list.map(e =>
+    '<tr class="rowlink" data-exec="' + e.execId + '"><td>' + e.execId + '</td>'
+    + '<td><b>' + esc(e.scenarioId) + '</b> ' + esc(e.title) + (e.intentional ? ' <span class="badge warn">probe</span>' : '') + (e.rerunOf ? ' <span class="badge run">rerun of #' + e.rerunOf + '</span>' : '') + '</td>'
+    + '<td>' + esc(e.mode) + '</td><td>' + esc(e.personaName) + '</td><td>' + esc(e.severity) + '</td>'
+    + '<td><span class="s ' + esc(e.status) + '">' + esc(e.status) + '</span>' + (e.flaky ? '<br><span class="badge warn">flaky</span>' : '') + '</td>'
+    + '<td class="n">' + e.durationMs + '</td></tr>').join('')
+    || '<tr><td colspan="7" class="empty">No executions match this filter.</td></tr>';
+  $('resBody').querySelectorAll('[data-exec]').forEach(tr => tr.onclick = () => openDetail(Number(tr.dataset.exec)));
+}
+$('statusFilter').onchange = () => currentData && renderTable(currentData.run);
+
+/* ── detail modal ── */
+function openDetail(execId) {
+  const run = currentData.run;
+  const e = run.executions.find(x => x.execId === execId);
+  if (!e) return;
+  selectedExec = e;
+  $('mTitle').innerHTML = esc(e.scenarioId + ' · ' + e.title) + ' <span class="s ' + esc(e.status) + '">' + esc(e.status) + '</span>';
+  $('mSub').textContent = 'exec #' + e.execId + ' · mode ' + e.mode + ' · persona ' + e.personaName + ' · category ' + e.category + ' · severity ' + e.severity + ' · seed ' + e.seed + ' · ' + e.durationMs + ' ms · ' + e.startedAt;
+  $('mExpected').innerHTML = '<div class="assert"><b>Expected</b><div class="det">' + esc(e.expected) + '</div></div>';
+  $('mAsserts').innerHTML = '<b style="font-size:12px">Assertions (' + e.assertions.filter(a => a.ok).length + '/' + e.assertions.length + ' passed)</b>'
+    + (e.assertions.length ? e.assertions.map(a =>
+      '<div class="assert ' + (a.ok ? 'ok' : 'no') + '">' + (a.ok ? '✔' : '✘') + ' ' + esc(a.name)
+      + (a.detail ? '<div class="det">' + esc(a.detail) + '</div>' : '') + '</div>').join('')
+      : '<div class="assert no">No assertions recorded.<div class="det">' + esc(e.error || '') + '</div></div>');
+  $('mObs').innerHTML = (e.observations || []).length
+    ? '<div class="assert"><b>Observations</b>' + e.observations.map(o => '<div class="det">· ' + esc(o) + '</div>').join('') + '</div>' : '';
+  $('mErr').innerHTML = e.error ? '<b style="font-size:12px">Execution error</b><pre>' + esc(e.error) + '</pre>' : '';
+  const arts = [];
+  if (e.artifacts.screenshot) arts.push('<a class="btn secondary sm" target="_blank" href="/' + esc(e.artifacts.screenshot) + '">Screenshot</a>');
+  if (e.artifacts.trace) arts.push('<a class="btn secondary sm" target="_blank" href="/' + esc(e.artifacts.trace) + '">Playwright trace</a>');
+  $('mArts').innerHTML = arts.join('') || '<span class="note">No failure artifacts for this execution (traces/screenshots are preserved for FAIL and BLOCKED only).</span>';
+  $('mRerunNote').textContent = e.intentional ? 'Probes do not need reruns.' : '';
+  $('mRerun').disabled = !!(currentData.run.status === 'running' || e.intentional);
+  $('modal').hidden = false;
+  $('mClose').focus();
+}
+$('mClose').onclick = () => { $('modal').hidden = true; };
+$('modal').onclick = ev => { if (ev.target === $('modal')) $('modal').hidden = true; };
+document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && !$('modal').hidden) $('modal').hidden = true; });
+
+$('mRerun').onclick = async () => {
+  if (!selectedExec) return;
+  $('mRerun').disabled = true;
+  $('mRerunNote').textContent = 'running…';
+  try {
+    const rec = await api('/api/runs/' + currentRunId + '/rerun', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ execId: selectedExec.execId })
+    });
+    $('mRerunNote').textContent = 'rerun #' + rec.execId + ': ' + rec.status + (rec.recoveredAfterRetry ? ' (original failure preserved; recovered after retry)' : '');
+    const data = await api('/api/runs/' + currentRunId);
+    renderRun(data);
+  } catch (e) {
+    $('mRerunNote').textContent = 'error: ' + e.message;
+    $('mRerun').disabled = false;
+  }
+};
+
+boot().catch(e => {
+  document.getElementById('prodMeta').textContent = 'Failed to load QA service: ' + e.message + ' — start it with: cd qa && npm install && npm start';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+{
+  "runId": "run-2026-10-24T13-19-11-868Z",
+  "status": "completed",
+  "startedAt": "2026-10-24T13:19:11.868Z",
+  "finishedAt": "2026-10-24T13:19:19.159Z",
+  "seed": 20261024,
+  "baseUrl": "http://127.0.0.1:8920",
+  "config": {
+    "executions": 2,
+    "mode": "all",
+    "scenarioIds": [
+      "H01",
+      "R01"
+    ],
+    "preset": "smoke",
+    "concurrency": 1,
+    "visibleWorker": "single visible Chrome window, one execution at a time"
+  },
+  "productVersion": {
+    "file": "index.html",
+    "sha256": "33cd4f933a39",
+    "testedOn": "2026-10-24"
+  },
+  "environment": {
+    "engine": "Google Chrome (system, headed)",
+    "browserVersion": "151.0.7922.137",
+    "node": "v24.19.0",
+    "os": "linux"
+  },
+  "plan": [
+    {
+      "idx": 0,
+      "scenarioId": "H01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 1,
+      "scenarioId": "R01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    }
+  ],
+  "execSeq": 2,
+  "executions": [
+    {
+      "execId": 0,
+      "idx": 0,
+      "round": 0,
+      "scenarioId": "H01",
+      "title": "Improved flow: timeout then confirmed paid via original reference",
+      "category": "happy-path",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "task_completion",
+      "intentional": false,
+      "expected": "Timeout shows \"Still confirming\" (never Failed); two status checks on the SAME attempt end paid; order becomes paid with only 1 chargeable attempt; settlement exception opens.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:19:12.778Z",
+      "durationMs": 4180,
+      "assertions": [
+        {
+          "name": "UI: timeout screen is \"Still confirming this payment\"",
+          "ok": true
+        },
+        {
+          "name": "State A (rule A): attempt unknown, order payment_pending after timeout",
+          "ok": true
+        },
+        {
+          "name": "Rule C: pending result creates no new chargeable attempt",
+          "ok": true
+        },
+        {
+          "name": "Rule B: same attempt ID used for both checks (PAY-1042-01)",
+          "ok": true
+        },
+        {
+          "name": "Rule D: paid with exactly 1 chargeable attempt",
+          "ok": true
+        },
+        {
+          "name": "Rule 5: settlement exception opened, not silently resolved",
+          "ok": true
+        },
+        {
+          "name": "UI: paid result offers Next customer",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": null,
+        "taskCompleted": true,
+        "recoverySuccess": null,
+        "terminalCorrect": true
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 1,
+      "idx": 1,
+      "round": 0,
+      "scenarioId": "R01",
+      "title": "Adversarial: retry attempt while original is pending is blocked",
+      "category": "rule-safety",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "dez",
+      "personaName": "Dez",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "Tapping \"Take payment\" while an attempt is unresolved shows the blocked screen; no second chargeable attempt is created; attempt ID unchanged.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:19:17.068Z",
+      "durationMs": 2035,
+      "assertions": [
+        {
+          "name": "Checkout shows pending notice, not a fresh start",
+          "ok": true
+        },
+        {
+          "name": "Rule D/4: blocked screen shown, dupBlocks incremented",
+          "ok": true
+        },
+        {
+          "name": "No second chargeable attempt; original ID PAY-1042-01 preserved",
+          "ok": true
+        }
+      ],
+      "observations": [],
+      "measurements": {
+        "dupAttemptPrevented": true,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    }
+  ],
+  "error": null,
+  "counts": {
+    "PASS": 2,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "INCONCLUSIVE": 0,
+    "SKIPPED": 0,
+    "pending": 0
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "runId": "run-2026-10-24T13-19-36-602Z",
+  "status": "completed",
+  "startedAt": "2026-10-24T13:19:36.602Z",
+  "finishedAt": "2026-10-24T13:19:40.395Z",
+  "seed": 20261024,
+  "baseUrl": "http://127.0.0.1:8920",
+  "config": {
+    "executions": 1,
+    "mode": "all",
+    "scenarioIds": [
+      "M01"
+    ],
+    "preset": "smoke",
+    "concurrency": 1,
+    "visibleWorker": "single visible Chrome window, one execution at a time"
+  },
+  "productVersion": {
+    "file": "index.html",
+    "sha256": "33cd4f933a39",
+    "testedOn": "2026-10-24"
+  },
+  "environment": {
+    "engine": "Google Chrome (system, headed)",
+    "browserVersion": "151.0.7922.137",
+    "node": "v24.19.0",
+    "os": "linux"
+  },
+  "plan": [
+    {
+      "idx": 0,
+      "scenarioId": "M01",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    }
+  ],
+  "execSeq": 1,
+  "executions": [
+    {
+      "execId": 0,
+      "idx": 0,
+      "round": 0,
+      "scenarioId": "M01",
+      "title": "Acceptance probe: intentionally false assertion (must report FAIL)",
+      "category": "meta",
+      "severity": "info",
+      "mode": "after",
+      "persona": "probe",
+      "personaName": "QA probe",
+      "metric": "meta",
+      "intentional": true,
+      "expected": "Known-false assertion: expects the timeout heading to be \"Payment failed\". The product is CORRECT to disagree; this probe proves failures are reported honestly. Excluded from all product metrics.",
+      "seed": 20261024,
+      "status": "FAIL",
+      "startedAt": "2026-10-24T13:19:37.342Z",
+      "durationMs": 1946,
+      "assertions": [
+        {
+          "name": "Probe: timeout heading is exactly \"Payment failed\" (known false)",
+          "ok": false,
+          "detail": "expected \"Payment failed\", got \"Still confirming this payment\""
+        }
+      ],
+      "observations": [
+        "Intentional failure injected to verify the harness does not mask failing assertions."
+      ],
+      "measurements": {
+        "dupAttemptPrevented": null,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": "results/runs/run-2026-10-24T13-19-36-602Z/exec-000-M01-after.png",
+        "trace": "results/runs/run-2026-10-24T13-19-36-602Z/exec-000-M01-after.zip"
+      },
+      "rerunOf": null
+    }
+  ],
+  "error": null,
+  "counts": {
+    "PASS": 0,
+    "FAIL": 1,
+    "BLOCKED": 0,
+    "INCONCLUSIVE": 0,
+    "SKIPPED": 0,
+    "pending": 0
+  }
+}

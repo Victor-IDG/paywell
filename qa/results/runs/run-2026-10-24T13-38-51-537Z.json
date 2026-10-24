@@ -1,0 +1,177 @@
+{
+  "runId": "run-2026-10-24T13-38-51-537Z",
+  "status": "running",
+  "startedAt": "2026-10-24T13:38:51.537Z",
+  "finishedAt": null,
+  "seed": 20261024,
+  "baseUrl": "http://127.0.0.1:8920",
+  "config": {
+    "executions": 3,
+    "mode": "all",
+    "scenarioIds": [
+      "H02",
+      "R03",
+      "U01"
+    ],
+    "preset": "verify",
+    "concurrency": 1,
+    "visibleWorker": "single visible Chrome window, one execution at a time"
+  },
+  "productVersion": {
+    "file": "index.html",
+    "sha256": "33cd4f933a39",
+    "testedOn": "2026-10-24"
+  },
+  "environment": {
+    "engine": "Google Chrome (system, headed)",
+    "browserVersion": "151.0.7922.137",
+    "node": "v24.19.0",
+    "os": "linux"
+  },
+  "plan": [
+    {
+      "idx": 0,
+      "scenarioId": "H02",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 1,
+      "scenarioId": "R03",
+      "mode": "after",
+      "round": 0,
+      "status": "done"
+    },
+    {
+      "idx": 2,
+      "scenarioId": "U01",
+      "mode": "after",
+      "round": 0
+    }
+  ],
+  "execSeq": 2,
+  "executions": [
+    {
+      "execId": 0,
+      "idx": 0,
+      "round": 0,
+      "scenarioId": "H02",
+      "title": "Improved flow: confirmed failure unlocks exactly one safe retry",
+      "category": "happy-path",
+      "severity": "critical",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "recovery_success",
+      "intentional": false,
+      "expected": "Customer 2 (reached from a fresh page via the customer-1 paid setup): pending → confirmed failed on the original attempt → exactly one new chargeable attempt allowed → paid on attempt 2 (PAY-1043-02); status checks never change the chargeable count.",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:38:52.646Z",
+      "durationMs": 6635,
+      "assertions": [
+        {
+          "name": "timeout screen keeps attempt unknown",
+          "ok": true
+        },
+        {
+          "name": "Queue advanced to customer 2 of 3",
+          "ok": true
+        },
+        {
+          "name": "Attempt 1 on customer 2 creates exactly one chargeable attempt (PAY-1043-01)",
+          "ok": true
+        },
+        {
+          "name": "Rule A/E: failure shown only after confirmation; retry offered; checks added no chargeable attempt",
+          "ok": true
+        },
+        {
+          "name": "Rule 4: exactly one new chargeable attempt after confirmed failure; new attempt ID (PAY-1043-02)",
+          "ok": true
+        },
+        {
+          "name": "Recovery completes paid on attempt 2 with no further chargeable attempts",
+          "ok": true
+        }
+      ],
+      "observations": [
+        "chargeable is a session-wide counter: the customer-1 paid setup contributes 1 before customer 2 begins."
+      ],
+      "measurements": {
+        "dupAttemptPrevented": null,
+        "taskCompleted": true,
+        "recoverySuccess": true,
+        "terminalCorrect": true
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    },
+    {
+      "execId": 1,
+      "idx": 1,
+      "round": 0,
+      "scenarioId": "R03",
+      "title": "Repeated status checks on an unresolved outcome stay pending and stable",
+      "category": "repeat",
+      "severity": "major",
+      "mode": "after",
+      "persona": "ada",
+      "personaName": "Ada",
+      "metric": "rule_safety",
+      "intentional": false,
+      "expected": "Customer 3 (reached from a fresh page via paid customer 1 + confirmed-failed customer 2): two checks stay pending and open exactly one unresolved exception; a third check changes nothing (same ID, no new chargeable attempt, no duplicate exception).",
+      "seed": 20261024,
+      "status": "PASS",
+      "startedAt": "2026-10-24T13:38:59.374Z",
+      "durationMs": 8561,
+      "assertions": [
+        {
+          "name": "timeout screen keeps attempt unknown",
+          "ok": true
+        },
+        {
+          "name": "Queue at customer 3 of 3",
+          "ok": true
+        },
+        {
+          "name": "Rule 6: exactly one unresolved exception; checks created no chargeable attempt",
+          "ok": true
+        },
+        {
+          "name": "Third check: same ID, chargeable unchanged, no duplicate unresolved exception",
+          "ok": true
+        }
+      ],
+      "observations": [
+        "Session chargeable counter is cumulative across customers (3 after the customer-3 start); the safety invariant tested is that status checks never increase it."
+      ],
+      "measurements": {
+        "dupAttemptPrevented": true,
+        "taskCompleted": null,
+        "recoverySuccess": null,
+        "terminalCorrect": null
+      },
+      "error": null,
+      "artifacts": {
+        "screenshot": null,
+        "trace": null
+      },
+      "rerunOf": null
+    }
+  ],
+  "error": null,
+  "counts": {
+    "PASS": 2,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "INCONCLUSIVE": 0,
+    "SKIPPED": 0,
+    "pending": 1
+  }
+}

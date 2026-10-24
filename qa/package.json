@@ -1,0 +1,12 @@
+{
+  "name": "paywell-qa",
+  "private": true,
+  "type": "module",
+  "description": "Headed-browser QA runner for the Paywell payment-reliability prototype",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "playwright": "^1.63.0"
+  }
+}
