@@ -4,3 +4,4 @@ qa/node_modules/
 nohup.out
 .vercel
 .env*
+.playwright-mcp/
