@@ -137,9 +137,12 @@ async function runOne(browser, baseUrl, planEntry, run) {
     }
   } catch (e) {
     const msg = String(e && e.message || e);
-    if (/net::|ERR_|Timeout .* exceeded.*goto|page\.goto/i.test(msg) && !/locator|waitFor/i.test(msg)) {
+    // Browser/process death is an environment problem, never a product result.
+    const envDeath = /Target page, context or browser has been closed|browser has been closed|browser.*crashed|browser.*disconnected|Protocol error|newContext:/i.test(msg);
+    const envNav = /net::|ERR_|Timeout .* exceeded.*goto|page\.goto/i.test(msg);
+    if (envDeath || (envNav && !/locator|waitFor/i.test(msg))) {
       rec.status = 'BLOCKED';
-      rec.error = 'Environment/navigation error: ' + msg.split('\n')[0];
+      rec.error = 'Environment error: ' + msg.split('\n')[0];
     } else {
       // The product did not reach the required state in time, or the interaction failed:
       // that is a real failure of the required behaviour, not an environment problem.
@@ -228,6 +231,33 @@ async function executeLoop(run, baseUrl) {
     for (const p of run.plan) {
       if (run.status === 'cancelling') { run.status = 'cancelled'; break; }
       if (p.status === 'done') continue;
+      // Recover from a crashed/disconnected browser: relaunch visibly and continue.
+      if (!browser.isConnected()) {
+        try {
+          ({ browser, engine } = await launchBrowser());
+          activeBrowser = browser;
+          run.environment = { engine, browserVersion: browser.version(), node: process.version, os: process.platform };
+        } catch (e2) {
+          const rec = {
+            execId: run.execSeq++, idx: p.idx, round: p.round, scenarioId: p.scenarioId,
+            title: (getScenario(p.scenarioId) || {}).title || p.scenarioId,
+            category: (getScenario(p.scenarioId) || {}).category || '',
+            severity: (getScenario(p.scenarioId) || {}).severity || 'info',
+            mode: p.mode, persona: (getScenario(p.scenarioId) || {}).persona || 'probe',
+            personaName: ((PERSONAS[(getScenario(p.scenarioId) || {}).persona] || {}).name) || p.scenarioId,
+            metric: (getScenario(p.scenarioId) || {}).metric || '', intentional: !!(getScenario(p.scenarioId) || {}).intentional,
+            expected: (getScenario(p.scenarioId) || {}).expected || '', seed: run.seed,
+            status: 'BLOCKED', startedAt: new Date().toISOString(), durationMs: 0,
+            assertions: [], observations: [], measurements: {}, error: 'Environment error: browser unavailable — ' + e2.message.split('\n')[0],
+            artifacts: { screenshot: null, trace: null }, rerunOf: p.rerunOf || null
+          };
+          run.executions.push(rec);
+          p.status = 'done';
+          run.counts = countStatuses(run);
+          persist(run);
+          continue;
+        }
+      }
       const rec = await runOne(browser, baseUrl, p, run);
       run.executions.push(rec);
       p.status = 'done';
